@@ -31,3 +31,68 @@ jobs:
         with:
           name: ${{ matrix.grupo }}
           path: ${{ matrix.grupo }}.json
+
+
+  merge-save:
+    needs: [extract]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configurar Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18.19.0"
+
+      - name: Descargar artefacto 1
+        uses: actions/download-artifact@v2
+        with:
+          name: "1"
+          path: artifacts
+
+      - name: Descargar artefacto 2
+        uses: actions/download-artifact@v2
+        with:
+          name: "2"
+          path: artifacts
+
+      - name: Descargar artefacto 3
+        uses: actions/download-artifact@v2
+        with:
+          name: "3"
+          path: artifacts
+
+      - name: Descargar artefacto 4
+        uses: actions/download-artifact@v2
+        with:
+          name: "4"
+          path: artifacts
+
+      - name: Descargar artefacto 5
+        uses: actions/download-artifact@v2
+        with:
+          name: "5"
+          path: artifacts
+
+      - name: Descargar artefacto 6
+        uses: actions/download-artifact@v2
+        with:
+          name: "6"
+          path: artifacts
+
+      - name: Descargar artefacto 7
+        uses: actions/download-artifact@v2
+        with:
+          name: "7"
+          path: artifacts
+
+      - name: Descargar artefacto 8
+        uses: actions/download-artifact@v2
+        with:
+          name: "8"
+          path: artifacts
+
+      - name: Descargar artefacto 9
+        uses: actions/download-artifact@v2
+        with:
+          name: "9"
+          path: artifacts
