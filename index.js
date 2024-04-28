@@ -15,18 +15,15 @@ async function main() {
 	];
 	console.log("Grupo asignado:", grupoAsignado);
 
-	/*
 	const DATA = {};
 	const promises = grupoAsignado.map(async (carrera) => {
+		console.log("Extrayendo:", carrera.nombre);
 		const data = await WorkerCarrera(carrera.codigo);
 		DATA[carrera.nombre] = data;
 	});
 
 	await Promise.all(promises);
-	fs.writeFileSync(`${index}.json`, JSON.stringify(allData));
-	*/
-
-	fs.writeFileSync(`${index}.json`, JSON.stringify(grupoAsignado));
+	fs.writeFileSync(`${index}.json`, JSON.stringify(DATA));
 
 	console.log("Done!");
 }

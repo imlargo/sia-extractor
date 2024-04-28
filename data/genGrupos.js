@@ -22,6 +22,8 @@ function agrupar() {
 		}
 	}
 
+	console.log("Grupos:", grupos.length);
+
 	fs.writeFile("grupos.json", JSON.stringify(grupos), (err) => {});
 }
 

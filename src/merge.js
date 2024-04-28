@@ -1,4 +1,5 @@
 const fs = require('fs/promises');
+const CODIGOS = require("../data/codigos.json");
 
 async function loadJson(path) {
     const data = await fs.readFile(path, 'utf-8');
@@ -12,8 +13,21 @@ async function main() {
     const data = await Promise.all(
         indexs.map(async i => await loadJson(`../artifacts/${i}.json`))
     );
+    const merged = data.reduce((acc, curr) => ({ ...acc, ...curr }));
 
-    await fs.writeFile('data.json', JSON.stringify(data));
+    const DATA = {};
+    for (const entries of Object.entries(CODIGOS)) {
+        const [facultad, carreras] = entries;
+
+        const dataFacultad = {};
+        Object.keys(carreras).forEach(carrera => {
+            dataFacultad[carrera] = merged[carrera];
+        });
+
+        DATA[facultad] = dataFacultad;
+    }
+
+    await fs.writeFile('data.json', JSON.stringify(DATA));
 }
 
 main();
