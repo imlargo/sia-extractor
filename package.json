@@ -1,0 +1,17 @@
+{
+  "name": "sia-extractor",
+  "version": "1.0.0",
+  "description": "...",
+  "main": "index.js",
+  "dependencies": {
+    "jsdom": "^23.2.0",
+    "node-fetch": "^2.7.0",
+    "puppeteer": "^21.7.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
