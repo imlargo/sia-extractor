@@ -3,6 +3,10 @@ name: start
 on:
   workflow_dispatch:
 
+  # Cada 25 minutos
+  #schedule:
+  #- cron: "*/25 * * * *"
+
 jobs:
   extract:
     runs-on: ubuntu-latest
