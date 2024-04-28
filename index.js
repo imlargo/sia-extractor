@@ -28,4 +28,5 @@ async function main() {
 	console.log("Done!");
 }
 
-main();
+// main();
+console.log("Hi imlargo");
