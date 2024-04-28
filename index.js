@@ -1,48 +1,31 @@
-const CODIGOS = require("./src/codigos.json");
-const child = require('child_process');
+const fs = require('fs');
+const { getAllMaterias } = require("./src/main.js");
+const GRUPOS = require("./data/grupos.json");
 
-const CONFIG = {
-	cantidad: 5,
+// import CODIGOS from "./src/codigos.json";
 
-};
-
-function agrupar() {
-	// Unir todas las carreras en un solo objeto
-	const carreras = Object.values(CODIGOS).reduce((acc, curr) => ({ ...acc, ...curr }) );
-	const entries = Object.entries(carreras)
-
-	// Dividir las carreras en arrays de 5 carreras
-	const grupos = [];
-	let grupo = [];
-	for (let i = 0; i < entries.length; i++) {
-		const [nombre, codigo] = entries[i];
-		grupo.push({nombre, codigo});
-		if (grupo.length === CONFIG.cantidad) {
-			grupos.push(grupo);
-			grupo = [];
-		}
-	}
-
-	return grupos
+async function WorkerCarrera(codigo) {
+	const data = await getAllMaterias(codigo);
+	return data;
 }
 
-
 async function main() {
-	const grupos = agrupar();
+	const input = process.argv[2];
+	const index = parseInt(input) - 1;
 
-	for (const grupo of grupos) {
-		// console.log(grupo);
-		const proceso = child.spawn(
-			'node', ['./src/worker-grupo.js', JSON.stringify(grupo)
-		],
-			{ detached: true }
-		);
+	const grupoAsignado = GRUPOS[index];
+	console.log("Grupo asignado:", index);
 
-		proceso.stdout.on('data', (data) => {
-			console.log(`stdout: ${data}`);
-		});
-	}
-	
+	const DATA = {};
+	const promises = grupoAsignado.map(async (carrera) => {
+		const data = await WorkerCarrera(carrera.codigo);
+		DATA[carrera.nombre] = data;
+	});
+
+	await Promise.all(promises);
+	fs.writeFileSync(`${index}.json`, JSON.stringify(allData));
+
+	console.log("Done!");
 }
 
 main();
