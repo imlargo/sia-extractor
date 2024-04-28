@@ -3,7 +3,6 @@ const child = require('child_process');
 
 const CONFIG = {
 	cantidad: 5,
-
 };
 
 function agrupar() {
@@ -45,4 +44,5 @@ async function main() {
 	
 }
 
-main();
+// main();
+console.log("Hi imlargo");
