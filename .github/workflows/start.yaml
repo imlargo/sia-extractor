@@ -9,6 +9,9 @@ on:
 
 jobs:
   extract:
+    strategy:
+      matrix:
+        grupo: [1,2,3,4,5,6,7,8,9]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,4 +24,4 @@ jobs:
         run: npm install
 
       - name: Extraer datos
-        run: node .
+        run: node . ${{ matrix.grupo }}
