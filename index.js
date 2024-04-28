@@ -8,10 +8,11 @@ async function WorkerCarrera(codigo) {
 }
 
 async function main() {
-	const input = process.argv[2];
-	const index = parseInt(input) - 1;
+	const index = process.argv[2];
 
-	const grupoAsignado = GRUPOS[index];
+	const grupoAsignado = GRUPOS[
+		parseInt(index) - 1
+	];
 	console.log("Grupo asignado:", grupoAsignado);
 
 	/*
@@ -24,6 +25,8 @@ async function main() {
 	await Promise.all(promises);
 	fs.writeFileSync(`${index}.json`, JSON.stringify(allData));
 	*/
+
+	fs.writeFileSync(`${index}.json`, JSON.stringify(grupoAsignado));
 
 	console.log("Done!");
 }
