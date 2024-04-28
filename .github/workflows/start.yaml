@@ -97,5 +97,16 @@ jobs:
           name: "9"
           path: artifacts
 
-      - name: merge data
-        run: ls
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Merge datos
+        run: |
+          cd src
+          node merge.js
+        
+      - name: Guardar datos
+        uses: actions/upload-artifact@v2
+        with:
+          name: data
+          path: src/data.json
