@@ -96,3 +96,6 @@ jobs:
         with:
           name: "9"
           path: artifacts
+
+      - name: merge data
+        run: ls
