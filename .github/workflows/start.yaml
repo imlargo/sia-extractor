@@ -43,59 +43,15 @@ jobs:
         with:
           node-version: "18.19.0"
 
-      - name: Descargar artefacto 1
-        uses: actions/download-artifact@v2
+      - name: Descargar artefactos
+        uses: actions/download-artifact@v4
         with:
-          name: "1"
           path: artifacts
 
-      - name: Descargar artefacto 2
-        uses: actions/download-artifact@v2
-        with:
-          name: "2"
-          path: artifacts
-
-      - name: Descargar artefacto 3
-        uses: actions/download-artifact@v2
-        with:
-          name: "3"
-          path: artifacts
-
-      - name: Descargar artefacto 4
-        uses: actions/download-artifact@v2
-        with:
-          name: "4"
-          path: artifacts
-
-      - name: Descargar artefacto 5
-        uses: actions/download-artifact@v2
-        with:
-          name: "5"
-          path: artifacts
-
-      - name: Descargar artefacto 6
-        uses: actions/download-artifact@v2
-        with:
-          name: "6"
-          path: artifacts
-
-      - name: Descargar artefacto 7
-        uses: actions/download-artifact@v2
-        with:
-          name: "7"
-          path: artifacts
-
-      - name: Descargar artefacto 8
-        uses: actions/download-artifact@v2
-        with:
-          name: "8"
-          path: artifacts
-
-      - name: Descargar artefacto 9
-        uses: actions/download-artifact@v2
-        with:
-          name: "9"
-          path: artifacts
+      - name: Mostrar artefactos
+        run: |
+          cd artifacts
+          ls
 
       - name: Instalar dependencias
         run: npm install

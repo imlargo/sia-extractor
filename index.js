@@ -3,8 +3,8 @@ const { getAllMaterias } = require("./src/main.js");
 const GRUPOS = require("./data/grupos.json");
 
 async function WorkerCarrera(codigo) {
-	const data = await getAllMaterias(codigo);
-	return data;
+	// const data = await getAllMaterias(codigo);
+	return { codigo: codigo };
 }
 
 async function main() {

@@ -1,9 +1,6 @@
 const fs = require('fs');
 const CODIGOS = require("./codigos.json");
-
-const CONFIG = {
-	cantidad: 5,
-};
+const { CONFIG } = require("../src/config.js");
 
 function agrupar() {
 	// Unir todas las carreras en un solo objeto
@@ -16,7 +13,7 @@ function agrupar() {
 	for (let i = 0; i < entries.length; i++) {
 		const [nombre, codigo] = entries[i];
 		grupo.push({nombre, codigo});
-		if (grupo.length === CONFIG.cantidad) {
+		if (grupo.length === CONFIG.cantidadPorGrupo) {
 			grupos.push(grupo);
 			grupo = [];
 		}
