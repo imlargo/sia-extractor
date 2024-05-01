@@ -15,7 +15,6 @@ async function main() {
         indexs.map(async i => await loadJson(`../artifacts/${i}.json`))
     );
 
-    /*
     const merged = data.reduce((acc, curr) => ({ ...acc, ...curr }));
 
     const DATA = {};
@@ -29,9 +28,8 @@ async function main() {
 
         DATA[facultad] = dataFacultad;
     }
-    */
 
-    await fs.writeFile('data.json', JSON.stringify(data));
+    await fs.writeFile('data.json', JSON.stringify(DATA));
 }
 
 main();
