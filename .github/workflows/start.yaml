@@ -56,9 +56,6 @@ jobs:
           cd artifacts
           ls
 
-      - name: Instalar dependencias
-        run: npm install
-
       - name: Merge datos
         run: |
           cd src
