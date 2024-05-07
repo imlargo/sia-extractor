@@ -9,14 +9,9 @@ function agrupar() {
 
 	// Dividir las carreras en arrays de 5 carreras
 	const grupos = [];
-	let grupo = [];
-	for (let i = 0; i < entries.length; i++) {
-		const [nombre, codigo] = entries[i];
-		grupo.push({nombre, codigo});
-		if (grupo.length === CONFIG.cantidadPorGrupo) {
-			grupos.push(grupo);
-			grupo = [];
-		}
+	for (let i = 0; i < entries.length; i += CONFIG.cantidadPorGrupo) {
+		const grupo = entries.slice(i, i + CONFIG.cantidadPorGrupo).map(([nombre, codigo]) => ({nombre, codigo}));
+		grupos.push(grupo);
 	}
 
 	console.log("Grupos:", grupos.length);

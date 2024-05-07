@@ -21,7 +21,6 @@
         "3508 INGENIERÍA AGRÍCOLA": "0-6-3-0",
         "3509 INGENIERÍA AGRONÓMICA": "0-6-3-1",
         "3510 INGENIERÍA FORESTAL": "0-6-3-2",
-        "M364 INGENIERÍA FORESTAL - ADMISIÓN POR ÁREAS - SEDE MEDELLÍN": "0-6-3-3",
         "3526 TECNOLOGÍA FORESTAL": "0-6-3-4",
         "3511 ZOOTECNIA": "0-6-3-5"
     },
@@ -55,11 +54,5 @@
         "3538 INGENIERÍA MECÁNICA": "0-6-5-21",
         "3525 INGENIERÍA QUÍMICA": "0-6-5-22",
         "3539 INGENIERÍA QUÍMICA": "0-6-5-23"
-    },
-    "3 SEDE MEDELLÍN": {
-        "3CLE COMPONENTE DE LIBRE ELECCIÓN": "0-6-6-0",
-        "2540 ENFERMERÍA": "0-6-6-1",
-        "2515 FARMACIA": "0-6-6-2",
-        "MVIS PROGRAMA ESPECIAL VISITANTE": "0-6-6-3"
     }
 }

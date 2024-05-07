@@ -1,5 +1,5 @@
 const CONFIG = {
-	cantidadPorGrupo: 3,
+	cantidadPorGrupo: 5,
 };
 
 module.exports = {
