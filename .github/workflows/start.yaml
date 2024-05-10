@@ -5,7 +5,7 @@ on:
 
   # Diariamente
   schedule:
-  - cron: "0 30 17 1/1 * ? *"
+  - cron: "0 0/10 * 1/1 * ? *"
 
 jobs:
   extract:
@@ -83,4 +83,3 @@ jobs:
 
           git commit -m "Automated: update data materias"
           git push
-          
