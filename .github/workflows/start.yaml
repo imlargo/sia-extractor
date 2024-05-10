@@ -5,7 +5,7 @@ on:
 
   # Diariamente
   schedule:
-  - cron: "0 0/10 * 1/1 * ? *"
+  - cron: "37 17 * * *"
 
 jobs:
   extract:
