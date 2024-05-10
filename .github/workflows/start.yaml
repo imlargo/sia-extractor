@@ -1,11 +1,11 @@
 name: start
 
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
 
-  # Cada 25 minutos
-  #schedule:
-  #- cron: "*/25 * * * *"
+  # Diariamente
+  schedule:
+  - cron: "0 30 17 1/1 * ? *"
 
 jobs:
   extract:
@@ -66,3 +66,20 @@ jobs:
         with:
           name: data
           path: src/data.json
+
+      - name: Deploy data
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/imlargo/api.git
+          
+          rm -r 'api/data.json'
+          cp -r "src/data.json" "api/"
+          
+          cd api
+
+          git config --global user.email "jlargob@unal.edu.co"
+          git config --global user.name "imlargo"
+
+          git add .
+
+          git commit -m "Automated: update data materias"
+          git push
