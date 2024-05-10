@@ -1,11 +1,12 @@
 name: start
 
 on:
-  # workflow_dispatch:
 
   # Diariamente
   schedule:
   - cron: "37 17 * * *"
+
+  workflow_dispatch:
 
 jobs:
   extract:

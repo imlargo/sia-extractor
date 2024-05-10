@@ -9,7 +9,7 @@ async function loadJson(path) {
 
 async function main() {
 
-    const indexs = Array.from({ length: CONFIG.cantidadPorGrupo }, (_, i) => i + 1);
+    const indexs = Array.from({ length: CONFIG.totalGrupos }, (_, i) => i + 1);
 
     const data = await Promise.all(
         indexs.map(async i => await loadJson(`../artifacts/${i}.json`))
