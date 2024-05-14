@@ -3,14 +3,25 @@ const CODIGOS = require("./codigos.json");
 const { CONFIG } = require("../src/config.js");
 
 function agrupar() {
-	// Unir todas las carreras en un solo objeto
-	const carreras = Object.values(CODIGOS).reduce((acc, curr) => ({ ...acc, ...curr }) );
-	const entries = Object.entries(carreras)
 
+	const allCarreras = [];
+	for (const entryFacultad of Object.entries(CODIGOS)) {
+		const [facultad, datosFacultad] = entryFacultad;
+
+		for (const entryCarrera of Object.entries(datosFacultad)) {
+			const [carrera, codigoCarrera] = entryCarrera;
+
+			allCarreras.push({
+				facultad: facultad,
+				carrera: carrera,
+				codigo: codigoCarrera,
+			})
+		}
+	}
 	// Dividir las carreras en arrays de 5 carreras
 	const grupos = [];
-	for (let i = 0; i < entries.length; i += CONFIG.cantidadPorGrupo) {
-		const grupo = entries.slice(i, i + CONFIG.cantidadPorGrupo).map(([nombre, codigo]) => ({nombre, codigo}));
+	for (let i = 0; i < allCarreras.length; i += CONFIG.cantidadPorGrupo) {
+		const grupo = allCarreras.slice(i, i + CONFIG.cantidadPorGrupo)
 		grupos.push(grupo);
 	}
 

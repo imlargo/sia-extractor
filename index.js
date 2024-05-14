@@ -2,8 +2,8 @@ const fs = require('fs');
 const { getAllMaterias } = require("./src/main.js");
 const GRUPOS = require("./data/grupos.json");
 
-async function WorkerCarrera(codigo) {
-	const data = await getAllMaterias(codigo);
+async function WorkerCarrera(codigo, facultadName, carreraName) {
+	const data = await getAllMaterias(codigo, facultadName, carreraName);
 	return data;
 }
 
@@ -17,9 +17,9 @@ async function main() {
 
 	const DATA = {};
 	const promises = grupoAsignado.map(async (carrera) => {
-		console.log("Extrayendo:", carrera.nombre);
-		const data = await WorkerCarrera(carrera.codigo);
-		DATA[carrera.nombre] = data;
+		console.log("Extrayendo:", carrera.carrera);
+		const data = await WorkerCarrera(carrera.codigo, carrera.facultad, carrera.carrera);
+		DATA[carrera.carrera] = data;
 	});
 
 	await Promise.all(promises);

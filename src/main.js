@@ -204,7 +204,7 @@ async function getMateria(codigoCarrera, codigoMateria) {
  * @param {string} codigoCarrera - El código de la carrera.
  * @returns {Promise<Array>} - Una promesa que se resuelve con una lista de materias.
  */
-async function getAllMaterias(codigoCarrera) {
+async function getAllMaterias(codigoCarrera, facultadName, carreraName) {
 	try {
 		// Cargar carrera
 		const [browser, page, table] = await loadCarrera(codigoCarrera);
@@ -238,6 +238,8 @@ async function getAllMaterias(codigoCarrera) {
 
 				// Obtener los detalles de la materia
 				const materia = await page.evaluate(procesarMateria);
+				materia.facultad = facultadName;
+				materia.carrera = carreraName;
 				materias.push(materia);
 				//console.log(materia.nombre);
 			} catch (e) {
