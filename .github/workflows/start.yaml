@@ -45,6 +45,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Instalar dependencias
+        run: npm install
+
       - name: Descargar artefactos
         uses: actions/download-artifact@v4
         with:
@@ -61,6 +64,9 @@ jobs:
         run: |
           cd src
           node merge.js
+
+      - name: deploy data
+        run: npm run deploy
         
       - name: Guardar datos
         uses: actions/upload-artifact@v4
