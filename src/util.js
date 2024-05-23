@@ -237,8 +237,6 @@ function procesarMateria() {
 	const prerrequisitos = elementosGrupo[elementosGrupo.length-1];
 	const hasRequisitos = prerrequisitos.getElementsByClassName("margin-t")[1] == undefined;
 
-	console.log(prerrequisitos.textContent);
-
 	const requisitos = hasRequisitos ? prerrequisitos.parentElement.querySelectorAll(".borde.salto.af_panelGroupLayout").map(container => {
 		const listado = Array.from(container.firstChild.childNodes);
 		const datos = listado.shift();
