@@ -234,6 +234,8 @@ function procesarMateria() {
 		grupos.push(grupo);
 	}
 
+	/*
+
 	const prerrequisitos = elementosGrupo[elementosGrupo.length-1];
 	const hasRequisitos = prerrequisitos.getElementsByClassName("margin-t")[1] == undefined;
 
@@ -246,6 +248,7 @@ function procesarMateria() {
 	if (hasRequisitos) {
 		console.log(requisitos);
 	}
+	*/
 	
 	// Crear objeto para la materia con los datos procesados
 	const materia = {
