@@ -226,6 +226,20 @@ function procesarMateria() {
 		grupos.push(grupo);
 	}
 
+
+	const prerrequisitos = elementosGrupo[elementosGrupo.length-1].nextElementSibling;
+	const hasRequisitos = prerrequisitos.textContent.includes("Prerrequisitos");
+
+	const requisitos = hasRequisitos ? prerrequisitos.querySelectorAll(".borde.salto.af_panelGroupLayout").map(container => {
+		const listado = Array.from(container.firstChild.childNodes);
+		const datos = listado.shift();
+		return listado.map(req => Array.from(req.firstChild.childNodes).map(node => node.textContent))
+	}) : 0;
+
+	if (requisitos) {
+		console.log(requisitos);
+	}
+	
 	// Crear objeto para la materia con los datos procesados
 	const materia = {
 		nombre: nombreMateria,
