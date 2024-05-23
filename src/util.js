@@ -44,6 +44,10 @@ async function load(url, options = { consola: false, req: false, res: false, sel
 			timeout: 120000,
 		});
 
+		page.on('dialog', async dialog => {
+			await dialog.accept(); // press 'Yes'
+		});
+
 		if (options.selector) {
 			await page.waitForSelector(options.selector);
 		}
