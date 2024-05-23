@@ -158,11 +158,11 @@ function procesarMateria() {
 	const marcaDeTiempo = new Date();
 	const opciones = {
 		timeZone: 'America/Bogota',
-		hour12: false,
+		hour12: true,
 		hour: "2-digit",
 		minute: "2-digit",
 	};
-	const fechaExtraccion = `${marcaDeTiempo.toLocaleDateString('es-CO', opciones)} - ${marcaDeTiempo.toLocaleTimeString('es-CO', opciones)}`;
+	const fechaExtraccion = `${marcaDeTiempo.toLocaleDateString('es-CO', { timeZone: 'America/Bogota' })} - ${marcaDeTiempo.toLocaleTimeString('es-CO', opciones)}`;
 
 	// Inicializar variables para los grupos y los cupos disponibles
 	const grupos = [];
