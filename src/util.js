@@ -156,7 +156,12 @@ function procesarMateria() {
 
 	// Obtener la marca de tiempo y fecha de extracción
 	const marcaDeTiempo = new Date();
-	const opciones = { timeZone: 'America/Bogota' };
+	const opciones = {
+		timeZone: 'America/Bogota',
+		hour12: false,
+		hour: "2-digit",
+		minute: "2-digit",
+	};
 	const fechaExtraccion = `${marcaDeTiempo.toLocaleDateString('es-CO', opciones)} - ${marcaDeTiempo.toLocaleTimeString('es-CO', opciones)}`;
 
 	// Inicializar variables para los grupos y los cupos disponibles
