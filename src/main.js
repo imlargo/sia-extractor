@@ -96,7 +96,7 @@ async function loadCarrera(codigoCarrera, carreraName) {
 			}, { timeout: 35000 });
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
 		} catch (error) {
-			console.error("Error al seleccionar carrera ${}:", error);
+			console.error("Error al seleccionar carrera: ", carreraName,  error);
 			throw error;
 		}
 
