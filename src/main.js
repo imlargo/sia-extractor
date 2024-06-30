@@ -93,7 +93,7 @@ async function loadCarrera(codigoCarrera, carreraName) {
 				const element = document.getElementById("pt1:r1:0:soc3::content");
 				const isDisabled = element.disabled;
 				return !isDisabled;
-			}, { timeout: 35000 });
+			}, { timeout: 15000 });
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
 		} catch (error) {
 			console.error("Error al seleccionar carrera: ", carreraName,  error);
