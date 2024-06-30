@@ -2,12 +2,18 @@ const fs = require('fs');
 const { getAllMaterias } = require("./src/main.js");
 const GRUPOS = require("./data/grupos.json");
 
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
 async function WorkerCarrera(codigo, facultadName, carreraName) {
+	await sleep(Math.random() * 3000);
 	const data = await getAllMaterias(codigo, facultadName, carreraName);
 	return data;
 }
 
 async function main() {
+
+	
+
 	const index = process.argv[2];
 
 	const grupoAsignado = GRUPOS[
