@@ -248,6 +248,8 @@ async function getAllMaterias(codigoCarrera, facultadName, carreraName) {
 
 		for (let i = 0; i < size; i++) {
 
+			console.log(`${i} - ${carreraName}`);
+
 			// Obtener la lista de cursos nuevamente para evitar errores de referencia
 			const courses = await page.$$(".af_commandLink");
 
