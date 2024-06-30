@@ -57,12 +57,9 @@ async function loadCarrera(codigoCarrera, carreraName) {
 		await selectOption(page, selectIds.nivel, searchValues.nivel);
 		console.log("Nivel seleccionado");
 
-		await sleep(1000);
-
 		try {
 			// Esperar a la respuesta y seleccionar sede
 			await page.waitForResponse(res => res.url().includes("sia"));
-			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc9::content");
 				const disabled = element.disabled;
@@ -78,9 +75,8 @@ async function loadCarrera(codigoCarrera, carreraName) {
 
 		try {
 			// Esperar a la respuesta y seleccionar facultad
-			await sleep(1000);
+			
 			await page.waitForResponse(res => res.url().includes("sia"));
-			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc2::content");
 				const disabled = element.disabled;
@@ -95,17 +91,14 @@ async function loadCarrera(codigoCarrera, carreraName) {
 
 		try {
 			// Esperar a la respuesta y seleccionar carrera
-			await sleep(1000);
 			await page.waitForResponse(res => res.url().includes("sia"));
-			await sleep(1000);
 			await page.waitForFunction(() => {
-				const element = document.getElementById("pt1:r1:0:soc3::content");
-				const isDisabled = element.disabled;
-				console.log("Carrera disabled: ", carreraName, isDisabled);
+				const isDisabled = document.getElementById("pt1:r1:0:soc3::content").disabled
 				return !isDisabled;
 			}, { timeout: 15000 });
 			await sleep(1000);
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
+			console.log("Carrera");
 		} catch (error) {
 			console.error("Error al seleccionar carrera: ", carreraName,  error);
 			throw error;
@@ -113,9 +106,7 @@ async function loadCarrera(codigoCarrera, carreraName) {
 
 		try {
 			// Esperar a la respuesta y seleccionar electiva
-			await sleep(1000);
 			await page.waitForResponse(res => res.url().includes("sia"));
-			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc4::content");
 				const disabled = element.disabled;
@@ -219,7 +210,7 @@ async function getMateria(codigoCarrera, codigoMateria) {
 
 		// Esperar a que se carguen los detalles de la materia
 		await page.waitForSelector(".af_showDetailHeader_content0", {
-			timeout: 3000,
+			timeout: 15000,
 		});
 
 		// Obtener los detalles de la materia
@@ -254,8 +245,6 @@ async function getAllMaterias(codigoCarrera, facultadName, carreraName) {
 		console.log(`	> ${size} materias encontradas para el plan de estudios!`);
 
 		for (let i = 0; i < size; i++) {
-
-			console.log(`${i} - ${carreraName}`);
 
 			// Obtener la lista de cursos nuevamente para evitar errores de referencia
 			const courses = await page.$$(".af_commandLink");
