@@ -18,7 +18,7 @@ const GLOBALS = {
  * @param {string} codigoCarrera - El código de la carrera a cargar.
  * @returns {Promise<Array>} - Una promesa que se resuelve con un arreglo que contiene el navegador, la página y la tabla cargada.
  */
-async function loadCarrera(codigoCarrera) {
+async function loadCarrera(codigoCarrera, carreraName) {
 	try {
 		// Inicializar el navegador
 		const [browser, page] = await load(
@@ -71,9 +71,6 @@ async function loadCarrera(codigoCarrera) {
 			throw error;
 		}
 
-
-
-
 		try {
 			// Esperar a la respuesta y seleccionar facultad
 			await page.waitForResponse(res => res.url().includes("sia"));
@@ -89,9 +86,6 @@ async function loadCarrera(codigoCarrera) {
 			throw error;
 		}
 
-
-
-
 		try {
 			// Esperar a la respuesta y seleccionar carrera
 			await page.waitForResponse(res => res.url().includes("sia"));
@@ -102,7 +96,7 @@ async function loadCarrera(codigoCarrera) {
 			}, { timeout: 35000 });
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
 		} catch (error) {
-			console.error("Error al seleccionar carrera:", error);
+			console.error("Error al seleccionar carrera ${}:", error);
 			throw error;
 		}
 
@@ -118,6 +112,7 @@ async function loadCarrera(codigoCarrera) {
 			}, { timeout: 15000 });
 			await selectOption(page, selectIds.electiva, searchValues.electiva);
 		} catch (error) {
+			console.log("Error: ", carreraName);
 			console.error("Error al seleccionar electiva:", error);
 			throw error;
 		}
@@ -236,7 +231,7 @@ async function getMateria(codigoCarrera, codigoMateria) {
 async function getAllMaterias(codigoCarrera, facultadName, carreraName) {
 	try {
 		// Cargar carrera
-		const [browser, page, table] = await loadCarrera(codigoCarrera);
+		const [browser, page, table] = await loadCarrera(codigoCarrera, carreraName);
 
 		const materias = [];
 
