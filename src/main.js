@@ -57,14 +57,19 @@ async function loadCarrera(codigoCarrera, carreraName) {
 		await selectOption(page, selectIds.nivel, searchValues.nivel);
 		console.log("Nivel seleccionado");
 
+		await sleep(1000);
+
 		try {
 			// Esperar a la respuesta y seleccionar sede
 			await page.waitForResponse(res => res.url().includes("sia"));
+			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc9::content");
 				const disabled = element.disabled;
 				return disabled == false;
 			}, { timeout: 15000 });
+
+			await sleep(1000);
 			await selectOption(page, selectIds.sede, searchValues.sede);
 		} catch (error) {
 			console.error("Error al seleccionar sede:", error);
@@ -73,6 +78,7 @@ async function loadCarrera(codigoCarrera, carreraName) {
 
 		try {
 			// Esperar a la respuesta y seleccionar facultad
+			await sleep(1000);
 			await page.waitForResponse(res => res.url().includes("sia"));
 			await sleep(1000);
 			await page.waitForFunction(() => {
@@ -80,6 +86,7 @@ async function loadCarrera(codigoCarrera, carreraName) {
 				const disabled = element.disabled;
 				return disabled == false;
 			}, { timeout: 15000 });
+			await sleep(1000);
 			await selectOption(page, selectIds.facultad, searchValues.facultad);
 		} catch (error) {
 			console.error("Error al seleccionar facultad:", error);
@@ -88,28 +95,33 @@ async function loadCarrera(codigoCarrera, carreraName) {
 
 		try {
 			// Esperar a la respuesta y seleccionar carrera
+			await sleep(1000);
 			await page.waitForResponse(res => res.url().includes("sia"));
+			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc3::content");
 				const isDisabled = element.disabled;
+				console.log("Carrera disabled: ", carreraName, isDisabled);
 				return !isDisabled;
 			}, { timeout: 15000 });
+			await sleep(1000);
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
 		} catch (error) {
 			console.error("Error al seleccionar carrera: ", carreraName,  error);
 			throw error;
 		}
 
-
-
 		try {
 			// Esperar a la respuesta y seleccionar electiva
+			await sleep(1000);
 			await page.waitForResponse(res => res.url().includes("sia"));
+			await sleep(1000);
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc4::content");
 				const disabled = element.disabled;
 				return disabled == false;
 			}, { timeout: 15000 });
+			await sleep(1000);
 			await selectOption(page, selectIds.electiva, searchValues.electiva);
 		} catch (error) {
 			console.log("Error: ", carreraName);
