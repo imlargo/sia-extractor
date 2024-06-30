@@ -97,9 +97,9 @@ async function loadCarrera(codigoCarrera) {
 			await page.waitForResponse(res => res.url().includes("sia"));
 			await page.waitForFunction(() => {
 				const element = document.getElementById("pt1:r1:0:soc3::content");
-				const disabled = element.disabled;
-				return disabled == false;
-			}, { timeout: 15000 });
+				const isDisabled = element.disabled;
+				return !isDisabled;
+			}, { timeout: 35000 });
 			await selectOption(page, selectIds.carrera, searchValues.carrera);
 		} catch (error) {
 			console.error("Error al seleccionar carrera:", error);
