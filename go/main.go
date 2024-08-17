@@ -122,14 +122,14 @@ func getAsignaturasCarrera(codigo Codigo) {
 		timeTotal := time.Now()
 
 		timeLoad := time.Now()
-		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr") // Delay
 
 		// Cargar asignatura
 		asignatura := asignaturas[i]
 		link := asignatura.MustElement(".af_commandLink")
 		link.MustClick()
 
-		page.MustWaitStable()
+		page.MustWaitStable() // Delay
 		timefinLoad := time.Since(timeLoad)
 
 		// Extraer datos
@@ -173,9 +173,9 @@ func getAsignaturasCarrera(codigo Codigo) {
 		promedioExtraccion += (tiemposExtraccion[i].Seconds())
 	}
 
-	println("Promedio total: ", (promedioTotal/float64(size))/1000.0)
-	println("Promedio carga: ", (promedioCarga/float64(size))/1000.0)
-	println("Promedio extraccion: ", (promedioExtraccion/float64(size))/1000.0)
+	println("Promedio total: ", (promedioTotal / float64(size)))
+	println("Promedio carga: ", (promedioCarga / float64(size)))
+	println("Promedio extraccion: ", (promedioExtraccion / float64(size)))
 
 	// Guardar datos de asignaturas en archivo json
 	dataAsignaturasJSON, _ := json.Marshal(dataAsignaturas)
