@@ -14,7 +14,7 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22.5'
-
+ 
     - name: Build
       run: |
         cd go
@@ -22,4 +22,7 @@ jobs:
         go build
 
     - name: run
-      run: ./main
+      run: |
+        cd go
+        ls
+        ./main
