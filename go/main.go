@@ -124,7 +124,7 @@ func getAsignaturasCarrera(codigo Codigo) {
 		timeLoad := time.Now()
 
 		timeListadAsignaturas := time.Now()
-		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr") // Delay
+		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr") // Delay
 		fmt.Printf("Tiempo listado asignaturas: %s\n", time.Since(timeListadAsignaturas))
 
 		// Cargar asignatura
@@ -135,7 +135,8 @@ func getAsignaturasCarrera(codigo Codigo) {
 		link := asignatura.MustElement(".af_commandLink")
 		link.MustClick()
 
-		page.MustWaitStable() // Delay
+		// page.MustWaitStable() // Delay
+		page.MustElement(".af_showDetailHeader_content0")
 		fmt.Printf("Tiempo navegacion: %s\n", time.Since(timeNave))
 
 		timefinLoad := time.Since(timeLoad)
