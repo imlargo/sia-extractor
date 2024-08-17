@@ -115,6 +115,8 @@ func getAsignaturasCarrera(codigo Codigo) {
 	for i := 0; i < size; i++ {
 		println(i, " / ", size)
 
+		s := time.Now()
+
 		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar asignatura
@@ -133,8 +135,10 @@ func getAsignaturasCarrera(codigo Codigo) {
 		backButton := page.MustElement(".af_button")
 		backButton.MustClick()
 
-		page.MustWaitStable()
-		println()
+		elapsed := time.Since(s)
+		fmt.Printf("time: %s\n", elapsed)
+
+		println("")
 
 	}
 
