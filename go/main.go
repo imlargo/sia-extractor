@@ -115,7 +115,9 @@ func getAsignaturasCarrera(codigo Codigo) {
 	for i := 0; i < size; i++ {
 		println(i, " / ", size)
 
-		s := time.Now()
+		totalTime := time.Now()
+
+		timeLoad := time.Now()
 
 		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
@@ -125,9 +127,13 @@ func getAsignaturasCarrera(codigo Codigo) {
 		link.MustClick()
 
 		page.MustWaitStable()
+		fmt.Printf("timeLoad: %s\n", time.Since(timeLoad))
 
 		// Extraer datos
+		timeExtraccion := time.Now()
 		data := procesarMateria(page)
+		fmt.Printf("timeExtraccopm: %s\n", time.Since(timeExtraccion))
+
 		dataAsignaturas[i] = data
 		println(data.Nombre, data.Codigo)
 
@@ -135,8 +141,8 @@ func getAsignaturasCarrera(codigo Codigo) {
 		backButton := page.MustElement(".af_button")
 		backButton.MustClick()
 
-		elapsed := time.Since(s)
-		fmt.Printf("time: %s\n", elapsed)
+		elapsed := time.Since(totalTime)
+		fmt.Printf("totalTime: %s\n", elapsed)
 
 		println("")
 
