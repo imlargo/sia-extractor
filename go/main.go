@@ -160,9 +160,6 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 	elapsedTime := time.Since(startTime)
 
-	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
-
-	println("Tiempos promedios")
 	promedioTotal := 0.0
 	promedioCarga := 0.0
 	promedioExtraccion := 0.0
@@ -173,6 +170,10 @@ func getAsignaturasCarrera(codigo Codigo) {
 		promedioExtraccion += (tiemposExtraccion[i].Seconds())
 	}
 
+	println(".............................")
+
+	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
+	println("--- Tiempos promedios ---")
 	println("Promedio total: ", (promedioTotal / float64(size)))
 	println("Promedio carga: ", (promedioCarga / float64(size)))
 	println("Promedio extraccion: ", (promedioExtraccion / float64(size)))
