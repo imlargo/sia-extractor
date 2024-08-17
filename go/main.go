@@ -1,6 +1,10 @@
 package main
 
-import "github.com/go-rod/rod"
+import (
+	"os"
+
+	"github.com/go-rod/rod"
+)
 
 /*
 type Horario struct {
@@ -20,15 +24,14 @@ type Horario struct {
 */
 
 type Asignatura struct {
-	// codigo    string
-	nombre string
-	// tipologia string
-	// creditos  string
+	nombre           string
+	codigo           string
+	tipologia        string
+	creditos         string
+	facultad         string
+	fechaExtraccion  string
+	cuposDisponibles string
 	/*
-		facultad: string;
-		carrera: string;
-		fechaExtraccion: string;
-		cuposDisponibles: number;
 
 		grupos: Grupo[];
 	*/
@@ -50,6 +53,8 @@ type Paths struct {
 	tipologia string
 }
 
+var JSFunction string = ""
+
 func main() {
 	codigo := Codigo{
 		nivel:     "Pregrado",
@@ -58,6 +63,9 @@ func main() {
 		carrera:   "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA",
 		tipologia: "TODAS MENOS  LIBRE ELECCIÓN",
 	}
+
+	content, _ := os.ReadFile("./getData.js")
+	JSFunction = string(content)
 
 	getAsignaturasCarrera(codigo)
 }
@@ -121,7 +129,7 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 		// Extraer datos
 		data := procesarMateria(page)
-		println(data.nombre)
+		println(data.nombre, data.codigo, data.tipologia, data.creditos, data.facultad, data.fechaExtraccion, data.cuposDisponibles)
 
 		// Regresar
 		backButton := page.MustElement(".af_button")
@@ -138,10 +146,16 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 func procesarMateria(page *rod.Page) Asignatura {
 
-	rawName := page.MustElement("h2").MustText()
+	dataAsignatura := page.MustEval(JSFunction)
 
 	return Asignatura{
-		nombre: rawName,
+		nombre:           dataAsignatura.Get("nombre").Str(),
+		codigo:           dataAsignatura.Get("codigo").Str(),
+		tipologia:        dataAsignatura.Get("tipologia").Str(),
+		creditos:         dataAsignatura.Get("creditos").Str(),
+		facultad:         dataAsignatura.Get("facultad").Str(),
+		fechaExtraccion:  dataAsignatura.Get("fechaExtraccion").Str(),
+		cuposDisponibles: dataAsignatura.Get("cuposDisponibles").Str(),
 	}
 
 }
