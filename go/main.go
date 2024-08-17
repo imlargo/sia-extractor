@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"os"
 
 	"github.com/go-rod/rod"
@@ -8,33 +9,30 @@ import (
 
 /*
 type Horario struct {
-	inicio: string;
-	fin: string;
-	dia: string;
+	inicio string
+	fin    string
+	dia    string
 }
 
- type Grupo struct {
-	grupo: string
-	cupos: number
-	profesor: string
-	duracion: string
-	jornada: string
-	horarios: Horario[]
+type Grupo struct {
+	grupo    string
+	cupos    int
+	profesor string
+	duracion string
+	jornada  string
+	horarios []Horario
 }
 */
 
 type Asignatura struct {
-	nombre           string
-	codigo           string
-	tipologia        string
-	creditos         string
-	facultad         string
-	fechaExtraccion  string
-	cuposDisponibles string
-	/*
-
-		grupos: Grupo[];
-	*/
+	Nombre           string `json:"nombre"`
+	Codigo           string `json:"codigo"`
+	Tipologia        string `json:"tipologia"`
+	Creditos         string `json:"creditos"`
+	Facultad         string `json:"facultad"`
+	FechaExtraccion  string `json:"fechaExtraccion"`
+	CuposDisponibles string `json:"cuposDisponibles"`
+	// grupos           []Grupo
 }
 
 type Codigo struct {
@@ -87,32 +85,27 @@ func getAsignaturasCarrera(codigo Codigo) {
 	println("")
 
 	page.MustWaitStable().MustElement(paths.nivel).MustClick().MustSelect(codigo.nivel)
-	println("Nivel")
 	page.MustWaitStable().MustElement(paths.sede).MustClick().MustSelect(codigo.sede)
-	println("Sede")
 	page.MustWaitStable().MustElement(paths.facultad).MustClick().MustSelect(codigo.facultad)
-	println("Facultad")
 	page.MustWaitStable().MustElement(paths.carrera).MustClick().MustSelect(codigo.carrera)
-	println("Carrera")
 	page.MustWaitStable().MustElement(paths.tipologia).MustClick().MustSelect(codigo.tipologia)
-	println("Tipologia")
 
 	// select all checkboxes
 	checkboxesDias := page.MustWaitStable().MustElements(".af_selectBooleanCheckbox_native-input")
 	for _, checkbox := range checkboxesDias {
 		checkbox.MustClick()
 	}
-	println("Dias")
+	println("Campos seleccionados")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustWaitStable().MustElement(".af_button_link").MustClick()
-	println("Buscar ejecutado")
-
 	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
 
 	println("Asignaturas encontradas: ", size)
 	println()
 	println()
+
+	var dataAsignaturas []Asignatura = make([]Asignatura, size)
 
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
@@ -129,7 +122,8 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 		// Extraer datos
 		data := procesarMateria(page)
-		println(data.nombre, data.codigo, data.tipologia, data.creditos, data.facultad, data.fechaExtraccion, data.cuposDisponibles)
+		dataAsignaturas[i] = data
+		println(data.Nombre, data.Codigo)
 
 		// Regresar
 		backButton := page.MustElement(".af_button")
@@ -140,6 +134,14 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 	}
 
+	for _, asignatura := range dataAsignaturas {
+		println(asignatura.Nombre, asignatura.Codigo)
+	}
+
+	// Guardar datos de asignaturas en archivo json
+	dataAsignaturasJSON, _ := json.Marshal(dataAsignaturas)
+	os.WriteFile("asignaturas.json", dataAsignaturasJSON, 0644)
+
 	println("")
 	println("Finalizado")
 }
@@ -149,13 +151,13 @@ func procesarMateria(page *rod.Page) Asignatura {
 	dataAsignatura := page.MustEval(JSFunction)
 
 	return Asignatura{
-		nombre:           dataAsignatura.Get("nombre").Str(),
-		codigo:           dataAsignatura.Get("codigo").Str(),
-		tipologia:        dataAsignatura.Get("tipologia").Str(),
-		creditos:         dataAsignatura.Get("creditos").Str(),
-		facultad:         dataAsignatura.Get("facultad").Str(),
-		fechaExtraccion:  dataAsignatura.Get("fechaExtraccion").Str(),
-		cuposDisponibles: dataAsignatura.Get("cuposDisponibles").Str(),
+		Nombre:           dataAsignatura.Get("nombre").Str(),
+		Codigo:           dataAsignatura.Get("codigo").Str(),
+		Tipologia:        dataAsignatura.Get("tipologia").Str(),
+		Creditos:         dataAsignatura.Get("creditos").Str(),
+		Facultad:         dataAsignatura.Get("facultad").Str(),
+		FechaExtraccion:  dataAsignatura.Get("fechaExtraccion").Str(),
+		CuposDisponibles: dataAsignatura.Get("cuposDisponibles").Str(),
 	}
 
 }

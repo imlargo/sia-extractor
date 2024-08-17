@@ -120,7 +120,7 @@
 		facultad: facultad.toString(),
 		fechaExtraccion: fechaExtraccion.toString(),
 		cuposDisponibles: cuposDisponibles.toString(),
-		// grupos: grupos,
+		grupos: JSON.stringify(grupos),
 	};
 
 	return materia;
