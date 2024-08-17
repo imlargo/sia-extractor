@@ -93,14 +93,14 @@ func getAsignaturasCarrera(codigo Codigo) {
 	page.MustWaitStable().MustElement(paths.tipologia).MustClick().MustSelect(codigo.tipologia)
 
 	// select all checkboxes
-	checkboxesDias := page.MustWaitStable().MustElements(".af_selectBooleanCheckbox_native-input")
+	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
 	for _, checkbox := range checkboxesDias {
 		checkbox.MustClick()
 	}
 	println("Campos seleccionados")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustElement(".af_button_link").MustClick()
+	page.MustElement(".af_button_link").MustClick()
 	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
 
 	println("Asignaturas encontradas: ", size)
