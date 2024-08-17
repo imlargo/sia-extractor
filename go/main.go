@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/go-rod/rod"
 )
@@ -107,6 +109,8 @@ func getAsignaturasCarrera(codigo Codigo) {
 
 	var dataAsignaturas []Asignatura = make([]Asignatura, size)
 
+	startTime := time.Now()
+
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 		println(i, " / ", size)
@@ -133,6 +137,10 @@ func getAsignaturasCarrera(codigo Codigo) {
 		println()
 
 	}
+
+	elapsedTime := time.Since(startTime)
+
+	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
 
 	for _, asignatura := range dataAsignaturas {
 		println(asignatura.Nombre, asignatura.Codigo)
