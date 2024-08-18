@@ -1,1 +1,184 @@
-[[{"facultad":"3064 FACULTAD DE ARQUITECTURA","carrera":"3501 ARQUITECTURA","codigo":"0-6-0-0"},{"facultad":"3064 FACULTAD DE ARQUITECTURA","carrera":"3502 ARTES PLÁSTICAS","codigo":"0-6-0-1"},{"facultad":"3064 FACULTAD DE ARQUITECTURA","carrera":"3503 CONSTRUCCIÓN","codigo":"0-6-0-2"},{"facultad":"3065 FACULTAD DE CIENCIAS","carrera":"3647 CIENCIAS DE LA COMPUTACIÓN","codigo":"0-6-1-0"}],[{"facultad":"3065 FACULTAD DE CIENCIAS","carrera":"3504 ESTADÍSTICA","codigo":"0-6-1-1"},{"facultad":"3065 FACULTAD DE CIENCIAS","carrera":"3505 INGENIERÍA BIOLÓGICA","codigo":"0-6-1-2"},{"facultad":"3065 FACULTAD DE CIENCIAS","carrera":"3506 INGENIERÍA FÍSICA","codigo":"0-6-1-3"},{"facultad":"3065 FACULTAD DE CIENCIAS","carrera":"3507 MATEMÁTICAS","codigo":"0-6-1-4"}],[{"facultad":"3442 FACULTAD DE CIENCIAS AGRARIAS","carrera":"3508 INGENIERÍA AGRÍCOLA","codigo":"0-6-2-0"},{"facultad":"3442 FACULTAD DE CIENCIAS AGRARIAS","carrera":"3509 INGENIERÍA AGRONÓMICA","codigo":"0-6-2-1"},{"facultad":"3442 FACULTAD DE CIENCIAS AGRARIAS","carrera":"3510 INGENIERÍA FORESTAL","codigo":"0-6-2-2"},{"facultad":"3442 FACULTAD DE CIENCIAS AGRARIAS","carrera":"3511 ZOOTECNIA","codigo":"0-6-2-3"}],[{"facultad":"3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS","carrera":"3512 CIENCIA POLÍTICA","codigo":"0-6-4-0"},{"facultad":"3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS","carrera":"3513 ECONOMÍA","codigo":"0-6-4-1"},{"facultad":"3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS","carrera":"3514 HISTORIA","codigo":"0-6-4-2"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3515 INGENIERÍA ADMINISTRATIVA","codigo":"0-6-5-0"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3528 INGENIERÍA ADMINISTRATIVA","codigo":"0-6-5-1"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3527 INGENIERÍA AMBIENTAL","codigo":"0-6-5-2"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3529 INGENIERÍA AMBIENTAL","codigo":"0-6-5-3"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3516 INGENIERÍA CIVIL","codigo":"0-6-5-4"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3530 INGENIERÍA CIVIL","codigo":"0-6-5-5"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3517 INGENIERÍA DE CONTROL","codigo":"0-6-5-6"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3531 INGENIERÍA DE CONTROL","codigo":"0-6-5-7"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3518 INGENIERÍA DE MINAS Y METALURGIA","codigo":"0-6-5-8"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3532 INGENIERÍA DE MINAS Y METALURGIA","codigo":"0-6-5-9"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3519 INGENIERÍA DE PETRÓLEOS","codigo":"0-6-5-10"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3533 INGENIERÍA DE PETRÓLEOS","codigo":"0-6-5-11"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3520 INGENIERÍA DE SISTEMAS E INFORMÁTICA","codigo":"0-6-5-12"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA","codigo":"0-6-5-13"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3521 INGENIERÍA ELÉCTRICA","codigo":"0-6-5-14"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3535 INGENIERÍA ELÉCTRICA","codigo":"0-6-5-15"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3522 INGENIERÍA GEOLÓGICA","codigo":"0-6-5-16"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3536 INGENIERÍA GEOLÓGICA","codigo":"0-6-5-17"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3523 INGENIERÍA INDUSTRIAL","codigo":"0-6-5-18"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3537 INGENIERÍA INDUSTRIAL","codigo":"0-6-5-19"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3524 INGENIERÍA MECÁNICA","codigo":"0-6-5-20"}],[{"facultad":"3068 FACULTAD DE MINAS","carrera":"3538 INGENIERÍA MECÁNICA","codigo":"0-6-5-21"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3525 INGENIERÍA QUÍMICA","codigo":"0-6-5-22"},{"facultad":"3068 FACULTAD DE MINAS","carrera":"3539 INGENIERÍA QUÍMICA","codigo":"0-6-5-23"}]]
+[
+    [
+        {
+            "carrera": "3501 ARQUITECTURA",
+            "facultad": "3064 FACULTAD DE ARQUITECTURA"
+        },
+        {
+            "carrera": "3502 ARTES PLÁSTICAS",
+            "facultad": "3064 FACULTAD DE ARQUITECTURA"
+        },
+        {
+            "carrera": "3503 CONSTRUCCIÓN",
+            "facultad": "3064 FACULTAD DE ARQUITECTURA"
+        }
+    ],
+    [
+        {
+            "carrera": "3647 CIENCIAS DE LA COMPUTACIÓN",
+            "facultad": "3065 FACULTAD DE CIENCIAS"
+        },
+        {
+            "carrera": "3504 ESTADÍSTICA",
+            "facultad": "3065 FACULTAD DE CIENCIAS"
+        },
+        {
+            "carrera": "3505 INGENIERÍA BIOLÓGICA",
+            "facultad": "3065 FACULTAD DE CIENCIAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3506 INGENIERÍA FÍSICA",
+            "facultad": "3065 FACULTAD DE CIENCIAS"
+        },
+        {
+            "carrera": "3507 MATEMÁTICAS",
+            "facultad": "3065 FACULTAD DE CIENCIAS"
+        },
+        {
+            "carrera": "3508 INGENIERÍA AGRÍCOLA",
+            "facultad": "3442 FACULTAD DE CIENCIAS AGRARIAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3509 INGENIERÍA AGRONÓMICA",
+            "facultad": "3442 FACULTAD DE CIENCIAS AGRARIAS"
+        },
+        {
+            "carrera": "3510 INGENIERÍA FORESTAL",
+            "facultad": "3442 FACULTAD DE CIENCIAS AGRARIAS"
+        },
+        {
+            "carrera": "3511 ZOOTECNIA",
+            "facultad": "3442 FACULTAD DE CIENCIAS AGRARIAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3512 CIENCIA POLÍTICA",
+            "facultad": "3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS"
+        },
+        {
+            "carrera": "3513 ECONOMÍA",
+            "facultad": "3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS"
+        },
+        {
+            "carrera": "3514 HISTORIA",
+            "facultad": "3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3515 INGENIERÍA ADMINISTRATIVA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3528 INGENIERÍA ADMINISTRATIVA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3527 INGENIERÍA AMBIENTAL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3529 INGENIERÍA AMBIENTAL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3516 INGENIERÍA CIVIL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3530 INGENIERÍA CIVIL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3517 INGENIERÍA DE CONTROL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3531 INGENIERÍA DE CONTROL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3518 INGENIERÍA DE MINAS Y METALURGIA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3532 INGENIERÍA DE MINAS Y METALURGIA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3519 INGENIERÍA DE PETRÓLEOS",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3533 INGENIERÍA DE PETRÓLEOS",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3520 INGENIERÍA DE SISTEMAS E INFORMÁTICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3521 INGENIERÍA ELÉCTRICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3535 INGENIERÍA ELÉCTRICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3522 INGENIERÍA GEOLÓGICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3536 INGENIERÍA GEOLÓGICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3523 INGENIERÍA INDUSTRIAL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3537 INGENIERÍA INDUSTRIAL",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3524 INGENIERÍA MECÁNICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ],
+    [
+        {
+            "carrera": "3538 INGENIERÍA MECÁNICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3525 INGENIERÍA QUÍMICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        },
+        {
+            "carrera": "3539 INGENIERÍA QUÍMICA",
+            "facultad": "3068 FACULTAD DE MINAS"
+        }
+    ]
+]

@@ -56,13 +56,14 @@ type Path struct {
 var jSExtractorFunctionContent string = ""
 
 const (
-	SIA_URL       string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
-	ValueNivel    string = "Pregrado"
-	ValueSede     string = "1102 SEDE MEDELLÍN"
-	Path_Carreras string = "carreras.json"
-	Tipologia_All string = "TODAS MENOS  LIBRE ELECCIÓN"
-	SizeGrupo     int    = 3
-	Path_Grupos   string = "grupos.json"
+	SIA_URL          string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
+	ValueNivel       string = "Pregrado"
+	ValueSede        string = "1102 SEDE MEDELLÍN"
+	Path_Carreras    string = "carreras.json"
+	Tipologia_All    string = "TODAS MENOS  LIBRE ELECCIÓN"
+	SizeGrupo        int    = 3
+	Path_Grupos      string = "grupos.json"
+	Path_JsExtractor string = "src/core/getData.js"
 )
 
 var Paths = Path{
@@ -214,7 +215,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 }
 
 func LoadJSExtractor() string {
-	content, _ := os.ReadFile("./getData.js")
+	content, _ := os.ReadFile(Path_JsExtractor)
 	JSExtractorFunctionContent := string(content)
 
 	return JSExtractorFunctionContent

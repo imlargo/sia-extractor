@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sia-extractor/core"
+	"sia-extractor/src/core"
 	"strconv"
 	"sync"
 	"time"
@@ -39,7 +39,7 @@ func main() {
 func extraerTodo(indexGrupo int) {
 
 	var listadoGrupos [][]map[string]string
-	contentGrupos, _ := os.ReadFile(core.Path_Grupos)
+	contentGrupos, _ := os.ReadFile("data/grupos.json")
 	json.Unmarshal(contentGrupos, &listadoGrupos)
 	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo]
 

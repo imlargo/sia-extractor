@@ -1,5 +1,3 @@
 node_modules
 
-go/asignaturas.json
-go/sia-extractor.exe
-go/sia-extractor
+sia-extractor.exe
