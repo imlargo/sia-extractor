@@ -17,11 +17,14 @@ function GroupBy(array, func) {
 
 async function main() {
 
+    console.log("Cantidad de grupos:", totalGrupos);
+    
+
     const indexs = Array.from({ length: totalGrupos }, (_, i) => i + 1);
 
     const data = await Promise.all(
         indexs.map(async i => {
-            const data = await fs.readFile(`../artifacts/${i}.json`, 'utf-8');
+            const data = await fs.readFile(`artifacts/${i}.json`, 'utf-8');
             return JSON.parse(data);
         })
     );
