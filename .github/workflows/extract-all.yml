@@ -1,4 +1,4 @@
-name: start golang extraction
+name: extract-all
 
 on:
   # Diariamente
