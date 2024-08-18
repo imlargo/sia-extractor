@@ -5,13 +5,20 @@ import (
 	"os"
 	"sia-extractor/core"
 	"sync"
+	"time"
 )
 
 func main() {
 
 	// core.CreatePathsCarreras()
 
+	initTime := time.Now()
+
 	extraerTodo()
+
+	println("")
+	println("......................................................")
+	println("Tiempo total de ejecución: ", time.Since(initTime))
 
 }
 
