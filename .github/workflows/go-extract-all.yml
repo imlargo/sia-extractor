@@ -7,6 +7,8 @@ on:
 
   workflow_dispatch:
 
+env:
+  MONGO_URI: ${{ secrets.MONGO_URI }}
 
 jobs:
   extract:
@@ -83,4 +85,4 @@ jobs:
       - name: deploy data
         run: |
           cd old
-          MONGO_URI=${{ secrets.MONGO_URI }} node src/deploy.js
+          MONGO_URI="${{secrets.MONGO_URI}}" node src/deploy.js
