@@ -80,7 +80,7 @@ func extraerTodo(indexGrupo int) {
 		finalAsignaturas = append(finalAsignaturas, asignaturas...)
 	}
 
-	filename := strconv.Itoa(indexGrupo) + ".json"
+	filename := strconv.Itoa(indexGrupo+1) + ".json"
 	finalAsignaturasJSON, _ := json.Marshal(finalAsignaturas)
 	os.WriteFile(filename, finalAsignaturasJSON, 0644)
 }

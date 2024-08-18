@@ -30,3 +30,4 @@ jobs:
       run: |
         ls
         ./sia-extractor ${{ github.event.inputs.group }}
+        ls
