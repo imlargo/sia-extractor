@@ -12,7 +12,7 @@ async function main() {
     const indexs = Array.from({ length: CONFIG.totalGrupos }, (_, i) => i + 1);
 
     const data = await Promise.all(
-        indexs.map(async i => await loadJson(`../artifacts/${i}.json`))
+        indexs.map(async i => await loadJson(`../../artifacts/${i}.json`))
     );
 
     const merged = data.reduce((acc, curr) => ({ ...acc, ...curr }));
