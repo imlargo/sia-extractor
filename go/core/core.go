@@ -110,16 +110,6 @@ func parseAsignatura(rawData *gson.JSON) Asignatura {
 	}
 }
 
-func procesarMateria(page *rod.Page) Asignatura {
-
-	dataAsignatura := page.MustEval(jSExtractorFunctionContent)
-
-	var asignatura Asignatura = parseAsignatura(&dataAsignatura)
-
-	return asignatura
-
-}
-
 func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
