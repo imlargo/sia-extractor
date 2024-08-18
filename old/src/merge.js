@@ -38,7 +38,7 @@ async function main() {
 
         const dataFacultad = {};
         carreras.forEach(carrera => {
-            dataFacultad[carrera.carrera] = merged[carrera];
+            dataFacultad[carrera.carrera] = merged[carrera.carrera];
         });
 
         DATA[facultad] = dataFacultad;
