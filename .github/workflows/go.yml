@@ -23,12 +23,7 @@ jobs:
       with:
         go-version-file: 'go.mod'
         cache-dependency-path: "**/*.sum"
- 
-    - name: Build
-      run: |
-        ls
-        go build
-        ls
+    - run: go build
 
     - name: run
       run: |
