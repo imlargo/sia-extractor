@@ -1,4 +1,4 @@
-const DATA = require("./data.json");
+const DATA = require("../data.json");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const uri = process.env.MONGO_URI;
