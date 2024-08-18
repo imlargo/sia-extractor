@@ -79,6 +79,11 @@ jobs:
           name: data
           path: old/src/data.json
 
+      - name: deploy data
+        run: |
+          cd old
+          npm run deploy
+
       #- name: deploy data
       #  run: npm run deploy
 
