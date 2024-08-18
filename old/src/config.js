@@ -1,6 +1,6 @@
 const CONFIG = {
-	cantidadPorGrupo: 4,
-    totalGrupos: 10,
+	cantidadPorGrupo: 3,
+    totalGrupos: 13,
 };
 
 module.exports = {

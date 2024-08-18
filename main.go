@@ -87,9 +87,10 @@ func extraerTodo(indexGrupo int) {
 		close(asignaturasChan)
 	}()
 
-	var finalAsignaturas []core.Asignatura
+	var finalAsignaturas map[string][]core.Asignatura = make(map[string][]core.Asignatura)
 	for asignaturas := range asignaturasChan {
-		finalAsignaturas = append(finalAsignaturas, asignaturas...)
+		var carrera string = asignaturas[0].Carrera
+		finalAsignaturas[carrera] = asignaturas
 	}
 
 	filename := strconv.Itoa(indexGrupo+1) + ".json"

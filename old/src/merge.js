@@ -1,10 +1,21 @@
 const fs = require('fs/promises');
-const CODIGOS = require("../data/codigos.json");
+const CARRERAS = require("../../data/carreras.json");
 const { CONFIG } = require("./config.js");
 
 async function loadJson(path) {
     const data = await fs.readFile(path, 'utf-8');
     return JSON.parse(data);
+}
+
+function GroupBy(array, func) {
+	return array.reduce((acc, obj) => {
+		const key = func(obj);
+		if (!acc[key]) {
+			acc[key] = [];
+		}
+		acc[key].push(obj);
+		return acc;
+	}, {});
 }
 
 async function main() {
@@ -15,15 +26,19 @@ async function main() {
         indexs.map(async i => await loadJson(`../../artifacts/${i}.json`))
     );
 
+    // Hacer un objeto con todas las carreras
     const merged = data.reduce((acc, curr) => ({ ...acc, ...curr }));
 
+    // Agrupar carreas por facultad
+    const agrupado = GroupBy(CARRERAS, (carrera) => carrera.facultad); 
+
     const DATA = {};
-    for (const entries of Object.entries(CODIGOS)) {
+    for (const entries of Object.entries(agrupado)) {
         const [facultad, carreras] = entries;
 
         const dataFacultad = {};
-        Object.keys(carreras).forEach(carrera => {
-            dataFacultad[carrera] = merged[carrera];
+        carreras.forEach(carrera => {
+            dataFacultad[carrera.carrera] = merged[carrera];
         });
 
         DATA[facultad] = dataFacultad;
