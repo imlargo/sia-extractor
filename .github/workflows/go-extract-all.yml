@@ -7,9 +7,6 @@ on:
 
   workflow_dispatch:
 
-env:
-  MONGO_URI: ${{ secrets.MONGO_URI }}
-
 jobs:
   extract:
     strategy:

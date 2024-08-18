@@ -1,0 +1,29 @@
+name: test-env 
+
+on:
+  # Diariamente
+  #schedule:
+  #- cron: "30 9 * * *"
+
+  workflow_dispatch:
+
+jobs:
+ 
+  merge-save:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: |
+          cd old
+          npm install
+
+      - name: test env
+        run: |
+          cd old
+          MONGO_URI="${{secrets.MONGO_URI}}" node src/env.js
