@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -213,6 +212,8 @@ func LoadJSExtractor() string {
 }
 
 func CreatePathsCarreras() {
+
+	startTime := time.Now()
 	println("Iniciando...")
 	page := rod.New().MustConnect().MustPage(SIA_URL)
 	println("Cargado. ok")
@@ -222,12 +223,10 @@ func CreatePathsCarreras() {
 	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(ValueSede)
 	println("Datos iniciales seleccionados")
 
-	listadoFacultades := page.MustWaitStable().MustElement(Paths.Facultad).MustElements("option")
+	selectFacultad := page.MustWaitStable().MustElement(Paths.Facultad)
+	listadoFacultades := selectFacultad.MustElements("option")
 
 	var listadoCarrerasSede []map[string]string
-
-	var wg sync.WaitGroup
-	carrerasChan := make(chan []map[string]string)
 
 	for i, facultad := range listadoFacultades {
 
@@ -235,51 +234,40 @@ func CreatePathsCarreras() {
 			continue
 		}
 
-		wg.Add(1)
-		go func(facultad string) {
-			defer wg.Done()
-			listadoCarrerasFacultad := extractCarrerasFromFacultad(facultad)
-			carrerasChan <- listadoCarrerasFacultad
-		}(facultad.MustText())
-	}
+		println("Seleccionando: ", facultad.MustText())
 
-	go func() {
-		wg.Wait()
-		close(carrerasChan)
-	}()
+		page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(facultad.MustText())
 
-	for carreras := range carrerasChan {
+		selectCarrera := page.MustWaitStable().MustElement(Paths.Carrera)
+		listadoCarreras := selectCarrera.MustElements("option")
+
+		var carreras []map[string]string = make([]map[string]string, len(listadoCarreras)-1)
+
+		for i, carrera := range listadoCarreras {
+
+			if i == 0 {
+				continue
+			}
+
+			println(facultad.MustText(), carrera.MustText())
+
+			carreras[i-1] = map[string]string{
+				"facultad": facultad.MustText(),
+				"carrera":  carrera.MustText(),
+			}
+		}
+
 		listadoCarrerasSede = append(listadoCarrerasSede, carreras...)
+
 	}
+
+	elapsedTime := time.Since(startTime)
+
+	println(".............................")
+	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
 
 	dataCarrerasJSON, _ := json.Marshal(listadoCarrerasSede)
 	os.WriteFile(Path_Carreras, dataCarrerasJSON, 0644)
 
 	println("Finalizado!!! :D")
-}
-
-func extractCarrerasFromFacultad(facultad string) []map[string]string {
-
-	page := rod.New().MustConnect().MustPage(SIA_URL)
-	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(ValueNivel)
-	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(ValueSede)
-	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(facultad)
-
-	listadoCarreras := page.MustWaitStable().MustElement(Paths.Carrera).MustElements("option")
-
-	var carreras []map[string]string = make([]map[string]string, len(listadoCarreras)-1)
-
-	for i, carrera := range listadoCarreras {
-
-		if i == 0 {
-			continue
-		}
-
-		carreras[i-1] = map[string]string{
-			"facultad": facultad,
-			"carrera":  carrera.MustText(),
-		}
-	}
-
-	return carreras
 }
