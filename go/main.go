@@ -43,10 +43,10 @@ func extraerTodo(indexGrupo int) {
 	json.Unmarshal(contentGrupos, &listadoGrupos)
 	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo]
 
-	asignaturasCh := make(chan []core.Asignatura, len(grupoAsignado))
+	var asignaturasBuffer [][]core.Asignatura = make([][]core.Asignatura, len(grupoAsignado))
 
 	var wg sync.WaitGroup
-	for _, carrera := range grupoAsignado {
+	for i, carrera := range grupoAsignado {
 
 		wg.Add(1)
 
@@ -65,18 +65,15 @@ func extraerTodo(indexGrupo int) {
 
 			var asignaturas []core.Asignatura = core.GetAsignaturasCarrera(codigo)
 
-			asignaturasCh <- asignaturas
+			asignaturasBuffer[i] = asignaturas
 
 		}(carrera)
 	}
 
-	go func() {
-		wg.Wait()
-		close(asignaturasCh)
-	}()
+	wg.Wait()
 
 	var finalAsignaturas []core.Asignatura
-	for asignaturas := range asignaturasCh {
+	for _, asignaturas := range asignaturasBuffer {
 		finalAsignaturas = append(finalAsignaturas, asignaturas...)
 	}
 
