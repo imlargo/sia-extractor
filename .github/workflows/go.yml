@@ -5,6 +5,11 @@ on:
   #  branches: [ "main" ]
 
   workflow_dispatch:
+    inputs:
+      group:
+        description: 'Grupo'
+        required: true
+        default: '11'
 
 jobs:
 
@@ -29,4 +34,4 @@ jobs:
       run: |
         cd go
         ls
-        ./sia-extractor 1
+        ./sia-extractor ${{ github.event.inputs.group }}
