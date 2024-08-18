@@ -20,9 +20,10 @@ jobs:
         cd go
         ls
         go build
+        ls
 
     - name: run
       run: |
         cd go
         ls
-        ./main
+        ./sia-extractor
