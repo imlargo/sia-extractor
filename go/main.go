@@ -3,79 +3,54 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"math"
 	"os"
 	"sia-extractor/core"
+	"strconv"
 	"sync"
 	"time"
-)
-
-const (
-	cantidad_por_grupo int = 4
 )
 
 func main() {
 
 	// core.CreatePathsCarreras()
 
-	fmt.Println(len(os.Args), os.Args)
+	var args []string = os.Args[1:]
+
+	if len(args) == 0 {
+		println("Debe ingresar los argumentos")
+		return
+	}
+
+	grupoAsignado, _ := strconv.Atoi(args[0])
+
+	println("Grupo asignado: ", grupoAsignado)
 
 	initTime := time.Now()
 
-	extraerTodo()
-
+	extraerTodo(grupoAsignado - 1)
 	println("")
 	println("......................................................")
 	fmt.Printf("Tiempo de ejecuciónnnnnnnnnnn final: %v\n", time.Since(initTime))
 
-	// group()
+	// core.GenerarGruposCarreras()
 
 }
 
-func group() {
-	var listadoCarreras []map[string]string
+func extraerTodo(indexGrupo int) {
 
-	contentCarreras, _ := os.ReadFile(core.Path_Carreras)
-	json.Unmarshal(contentCarreras, &listadoCarreras)
+	var listadoGrupos [][]map[string]string
+	contentGrupos, _ := os.ReadFile(core.Path_Grupos)
+	json.Unmarshal(contentGrupos, &listadoGrupos)
+	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo]
 
-	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(cantidad_por_grupo)))
-
-	println("Cantidad de stacks: ", (stacks))
-
-	var grupos [][]map[string]string
-	for i := 0; i < stacks; i++ {
-		var grupo []map[string]string
-
-		for j := 0; j < cantidad_por_grupo; j++ {
-			if (i*cantidad_por_grupo)+j < len(listadoCarreras) {
-				grupo = append(grupo, listadoCarreras[(i*cantidad_por_grupo)+j])
-			}
-		}
-
-		grupos = append(grupos, grupo)
-	}
-
-	dataGruposJSON, _ := json.Marshal(grupos)
-	os.WriteFile("grupos.json", dataGruposJSON, 0644)
-
-}
-
-func extraerTodo() {
-	var listadoCarreras []map[string]string
-
-	contentCarreras, _ := os.ReadFile(core.Path_Carreras)
-	json.Unmarshal(contentCarreras, &listadoCarreras)
+	var dataAsignaturas [][]core.Asignatura = make([][]core.Asignatura, core.SizeGrupo)
 
 	var wg sync.WaitGroup
-	for _, carrera := range listadoCarreras[0:4] {
+	for _, carrera := range grupoAsignado {
 
 		wg.Add(1)
 
 		go func(carrera map[string]string) {
-			defer wg.Done()
-
-			println("--------------------- INICIANDOOOO ", carrera["carrera"], "---------------------")
-
 			codigo := core.Codigo{
 				Nivel:     core.ValueNivel,
 				Sede:      core.ValueSede,
@@ -84,14 +59,25 @@ func extraerTodo() {
 				Tipologia: core.Tipologia_All,
 			}
 
+			defer wg.Done()
+
+			println("INICIANDOOOO: ", codigo.Carrera)
+
 			var asignaturas []core.Asignatura = core.GetAsignaturasCarrera(codigo)
-			dataAsignaturasJSON, _ := json.Marshal(asignaturas)
-			var filename string = codigo.Carrera + ".json"
-			os.WriteFile(filename, dataAsignaturasJSON, 0644)
+
+			dataAsignaturas[indexGrupo] = asignaturas
 
 		}(carrera)
 	}
 
 	wg.Wait()
 
+	var finalAsignaturas []core.Asignatura
+	for _, asignaturas := range dataAsignaturas {
+		finalAsignaturas = append(finalAsignaturas, asignaturas...)
+	}
+
+	var filename string = strconv.Itoa(indexGrupo) + ".json"
+	finalAsignaturasJSON, _ := json.Marshal(finalAsignaturas)
+	os.WriteFile(filename, finalAsignaturasJSON, 0644)
 }

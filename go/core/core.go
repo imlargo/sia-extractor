@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"time"
 
@@ -60,6 +61,8 @@ const (
 	ValueSede     string = "1102 SEDE MEDELLÍN"
 	Path_Carreras string = "carreras.json"
 	Tipologia_All string = "TODAS MENOS  LIBRE ELECCIÓN"
+	SizeGrupo     int    = 3
+	Path_Grupos   string = "grupos.json"
 )
 
 var Paths = Path{
@@ -296,4 +299,32 @@ func CreatePathsCarreras() {
 	os.WriteFile(Path_Carreras, dataCarrerasJSON, 0644)
 
 	println("Finalizado!!! :D")
+}
+
+func GenerarGruposCarreras() {
+	var listadoCarreras []map[string]string
+
+	contentCarreras, _ := os.ReadFile(Path_Carreras)
+	json.Unmarshal(contentCarreras, &listadoCarreras)
+
+	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(SizeGrupo)))
+
+	println("Cantidad de stacks: ", (stacks))
+
+	var grupos [][]map[string]string
+	for i := 0; i < stacks; i++ {
+		var grupo []map[string]string
+
+		for j := 0; j < SizeGrupo; j++ {
+			if (i*SizeGrupo)+j < len(listadoCarreras) {
+				grupo = append(grupo, listadoCarreras[(i*SizeGrupo)+j])
+			}
+		}
+
+		grupos = append(grupos, grupo)
+	}
+
+	dataGruposJSON, _ := json.Marshal(grupos)
+	os.WriteFile(Path_Grupos, dataGruposJSON, 0644)
+
 }
