@@ -3,8 +3,8 @@ name: start
 on:
 
   # Diariamente
-  schedule:
-  - cron: "30 9 * * *"
+  #schedule:
+  #- cron: "30 9 * * *"
 
   workflow_dispatch:
 

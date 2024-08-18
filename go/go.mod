@@ -1,4 +1,4 @@
-module sia-extractor/main
+module sia-extractor
 
 go 1.22.5
 
