@@ -141,7 +141,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	println("Asignaturas encontradas: ", size)
 	println()
-	println()
 
 	var dataAsignaturas []Asignatura = make([]Asignatura, size)
 
@@ -185,8 +184,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		tiemposTotales[i] = timefinTotal
 		tiemposCarga[i] = timefinLoad
 		tiemposExtraccion[i] = timefinExtraccion
-
-		println("")
 
 	}
 
