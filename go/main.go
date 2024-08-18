@@ -43,7 +43,7 @@ func extraerTodo(indexGrupo int) {
 	json.Unmarshal(contentGrupos, &listadoGrupos)
 	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo]
 
-	var dataAsignaturas [][]core.Asignatura = make([][]core.Asignatura, core.SizeGrupo)
+	asignaturasCh := make(chan []core.Asignatura, len(grupoAsignado))
 
 	var wg sync.WaitGroup
 	for _, carrera := range grupoAsignado {
@@ -51,6 +51,8 @@ func extraerTodo(indexGrupo int) {
 		wg.Add(1)
 
 		go func(carrera map[string]string) {
+			defer wg.Done()
+
 			codigo := core.Codigo{
 				Nivel:     core.ValueNivel,
 				Sede:      core.ValueSede,
@@ -59,25 +61,26 @@ func extraerTodo(indexGrupo int) {
 				Tipologia: core.Tipologia_All,
 			}
 
-			defer wg.Done()
-
 			println("INICIANDOOOO: ", codigo.Carrera)
 
 			var asignaturas []core.Asignatura = core.GetAsignaturasCarrera(codigo)
 
-			dataAsignaturas[indexGrupo] = asignaturas
+			asignaturasCh <- asignaturas
 
 		}(carrera)
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(asignaturasCh)
+	}()
 
 	var finalAsignaturas []core.Asignatura
-	for _, asignaturas := range dataAsignaturas {
+	for asignaturas := range asignaturasCh {
 		finalAsignaturas = append(finalAsignaturas, asignaturas...)
 	}
 
-	var filename string = strconv.Itoa(indexGrupo) + ".json"
+	filename := strconv.Itoa(indexGrupo) + ".json"
 	finalAsignaturasJSON, _ := json.Marshal(finalAsignaturas)
 	os.WriteFile(filename, finalAsignaturasJSON, 0644)
 }
