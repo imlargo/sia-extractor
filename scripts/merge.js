@@ -21,7 +21,7 @@ async function main() {
 
     const data = await Promise.all(
         indexs.map(async i => {
-            const data = await fs.readFile(`../../artifacts/${i}.json`, 'utf-8');
+            const data = await fs.readFile(`../artifacts/${i}.json`, 'utf-8');
             return JSON.parse(data);
         })
     );
