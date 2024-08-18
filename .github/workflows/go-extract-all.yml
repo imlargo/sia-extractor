@@ -1,0 +1,100 @@
+name: start
+
+on:
+  # Diariamente
+  #schedule:
+  #- cron: "30 9 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  extract:
+    strategy:
+      matrix:
+        grupo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.5"
+
+      - name: Build
+        run: |
+          cd go
+          ls
+          go build
+          ls
+
+      - name: run
+        run: |
+          cd go
+          ls
+          ./sia-extractor ${{ matrix.grupo }}
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.grupo }}
+          path: go/${{ matrix.grupo }}.json
+          retention-days: 1
+
+  merge-save:
+    needs: [extract]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Descargar artefactos
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: artifact-*
+          merge-multiple: true
+
+      - name: Mostrar artefactos
+        run: |
+          cd artifacts
+          ls
+
+      - name: Merge datos
+        run: |
+          cd src
+          node merge.js
+
+      - name: Guardar datos
+        uses: actions/upload-artifact@v4
+        with:
+          name: data
+          path: src/data.json
+
+      #- name: deploy data
+      #  run: npm run deploy
+
+      #
+#
+#- name: Deploy data
+#  run: |
+#    git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/imlargo/api.git
+#
+#    rm -r 'api/data.json'
+#    cp -r "src/data.json" "api/"
+#
+#    cd api
+#
+#    git config --global user.email "jlargob@unal.edu.co"
+#    git config --global user.name "imlargo"
+#
+#    git add .
+#
+#    git commit -m "Automated: update data materias"
+#    git push
