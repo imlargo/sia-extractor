@@ -60,6 +60,7 @@ const (
 	ValueNivel    string = "Pregrado"
 	ValueSede     string = "1102 SEDE MEDELLÍN"
 	Path_Carreras string = "carreras.json"
+	Tipologia_All string = "TODAS MENOS  LIBRE ELECCIÓN"
 )
 
 var Paths = Path{

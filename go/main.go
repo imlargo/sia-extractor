@@ -4,22 +4,49 @@ import (
 	"encoding/json"
 	"os"
 	"sia-extractor/core"
+	"sync"
 )
 
 func main() {
 
-	codigo := core.Codigo{
-		Nivel:     core.ValueNivel,
-		Sede:      core.ValueSede,
-		Facultad:  "3068 FACULTAD DE MINAS",
-		Carrera:   "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA",
-		Tipologia: "TODAS MENOS  LIBRE ELECCIÓN",
+	// core.CreatePathsCarreras()
+
+	extraerTodo()
+
+}
+
+func extraerTodo() {
+	var listadoCarreras []map[string]string
+
+	contentCarreras, _ := os.ReadFile("carreras.json")
+	json.Unmarshal(contentCarreras, &listadoCarreras)
+
+	var wg sync.WaitGroup
+	for _, carrera := range listadoCarreras[0:3] {
+
+		wg.Add(1)
+
+		go func(carrera map[string]string) {
+			defer wg.Done()
+
+			println("--------------------- INICIANDOOOO ", carrera["carrera"], "---------------------")
+
+			codigo := core.Codigo{
+				Nivel:     core.ValueNivel,
+				Sede:      core.ValueSede,
+				Facultad:  carrera["facultad"],
+				Carrera:   carrera["carrera"],
+				Tipologia: core.Tipologia_All,
+			}
+
+			var asignaturas []core.Asignatura = core.GetAsignaturasCarrera(codigo)
+			dataAsignaturasJSON, _ := json.Marshal(asignaturas)
+			var filename string = codigo.Carrera + ".json"
+			os.WriteFile(filename, dataAsignaturasJSON, 0644)
+
+		}(carrera)
 	}
 
-	asignaturas := core.GetAsignaturasCarrera(codigo)
+	wg.Wait()
 
-	dataAsignaturasJSON, _ := json.Marshal(asignaturas)
-	os.WriteFile("asignaturas.json", dataAsignaturasJSON, 0644)
-
-	// core.CreatePathsCarreras()
 }
