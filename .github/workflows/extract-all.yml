@@ -57,12 +57,18 @@ jobs:
           pattern: artifact-*
           merge-multiple: true
 
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
       - name: Instalar dependencias
         run: |
           npm install
 
       - name: Consolidar datos
-        run: node scripts/merge.js
+        run: go run . merge
 
       - name: Guardar datos
         uses: actions/upload-artifact@v4

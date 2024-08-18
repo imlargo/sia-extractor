@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
+	"sia-extractor/src/utils"
 	"strconv"
 	"sync"
 	"time"
@@ -30,6 +31,12 @@ func main() {
 	if args[0] == "group" {
 		println("Agrupando carreras")
 		core.GenerarGruposCarreras()
+		return
+	}
+
+	if args[0] == "merge" {
+		println("Consolidando datos")
+		utils.MergeData()
 		return
 	}
 
