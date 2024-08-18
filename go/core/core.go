@@ -74,9 +74,12 @@ func procesarMateria(page *rod.Page) Asignatura {
 	dataAsignatura := page.MustEval(jSExtractorFunctionContent)
 
 	rawGrupos := dataAsignatura.Get("grupos").Arr()
+	println("Grupos: ", len(rawGrupos))
+
 	var grupos []Grupo = make([]Grupo, len(rawGrupos))
 
 	for i, rawGrupo := range rawGrupos {
+		println("Grupo: ", rawGrupo.Get("profesor").Str())
 
 		rawHorarios := rawGrupo.Get("horarios").Arr()
 		var horarios []Horario = make([]Horario, len(rawHorarios))
@@ -108,6 +111,7 @@ func procesarMateria(page *rod.Page) Asignatura {
 		Facultad:         dataAsignatura.Get("facultad").Str(),
 		FechaExtraccion:  dataAsignatura.Get("fechaExtraccion").Str(),
 		CuposDisponibles: dataAsignatura.Get("cuposDisponibles").Str(),
+		Grupos:           grupos,
 	}
 
 }
