@@ -59,27 +59,16 @@ jobs:
 
       - name: Instalar dependencias
         run: |
-          cd old
           npm install
 
-      - name: Mostrar artefactos
-        run: |
-          ls
-          cd artifacts
-          ls
-
-      - name: Merge datos
-        run: |
-          cd old/src
-          node merge.js
+      - name: Consolidar datos
+        run: node scripts/merge.js
 
       - name: Guardar datos
         uses: actions/upload-artifact@v4
         with:
           name: data
-          path: old/src/data.json
+          path: data.json
 
       - name: deploy data
-        run: |
-          cd old
-          MONGO_URI="${{secrets.MONGO_URI}}" node src/deploy.js
+        run: MONGO_URI="${{secrets.MONGO_URI}}" node scripts/deploy.js

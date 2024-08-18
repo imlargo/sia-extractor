@@ -1,11 +1,8 @@
 const fs = require('fs/promises');
-const CARRERAS = require("../../data/carreras.json");
-const { CONFIG } = require("./config.js");
+const CARRERAS = require("../data/carreras.json");
+const GRUPOS = require("../data/grupos.json");
 
-async function loadJson(path) {
-    const data = await fs.readFile(path, 'utf-8');
-    return JSON.parse(data);
-}
+const totalGrupos = GRUPOS.length;
 
 function GroupBy(array, func) {
 	return array.reduce((acc, obj) => {
@@ -20,10 +17,13 @@ function GroupBy(array, func) {
 
 async function main() {
 
-    const indexs = Array.from({ length: CONFIG.totalGrupos }, (_, i) => i + 1);
+    const indexs = Array.from({ length: totalGrupos }, (_, i) => i + 1);
 
     const data = await Promise.all(
-        indexs.map(async i => await loadJson(`../../artifacts/${i}.json`))
+        indexs.map(async i => {
+            const data = await fs.readFile(`../../artifacts/${i}.json`, 'utf-8');
+            return JSON.parse(data);
+        })
     );
 
     // Hacer un objeto con todas las carreras
