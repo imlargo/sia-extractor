@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-rod/rod"
+	"github.com/ysmood/gson"
 )
 
 type Horario struct {
@@ -69,18 +70,12 @@ var Paths = Path{
 	Tipologia: "#pt1\\:r1\\:0\\:soc4\\:\\:content",
 }
 
-func procesarMateria(page *rod.Page) Asignatura {
-
-	dataAsignatura := page.MustEval(jSExtractorFunctionContent)
-
-	rawGrupos := dataAsignatura.Get("grupos").Arr()
-	println("Grupos: ", len(rawGrupos))
+func parseAsignatura(rawData *gson.JSON) Asignatura {
+	rawGrupos := rawData.Get("grupos").Arr()
 
 	var grupos []Grupo = make([]Grupo, len(rawGrupos))
 
 	for i, rawGrupo := range rawGrupos {
-		println("Grupo: ", rawGrupo.Get("profesor").Str())
-
 		rawHorarios := rawGrupo.Get("horarios").Arr()
 		var horarios []Horario = make([]Horario, len(rawHorarios))
 
@@ -104,15 +99,24 @@ func procesarMateria(page *rod.Page) Asignatura {
 	}
 
 	return Asignatura{
-		Nombre:           dataAsignatura.Get("nombre").Str(),
-		Codigo:           dataAsignatura.Get("codigo").Str(),
-		Tipologia:        dataAsignatura.Get("tipologia").Str(),
-		Creditos:         dataAsignatura.Get("creditos").Str(),
-		Facultad:         dataAsignatura.Get("facultad").Str(),
-		FechaExtraccion:  dataAsignatura.Get("fechaExtraccion").Str(),
-		CuposDisponibles: dataAsignatura.Get("cuposDisponibles").Str(),
+		Nombre:           rawData.Get("nombre").Str(),
+		Codigo:           rawData.Get("codigo").Str(),
+		Tipologia:        rawData.Get("tipologia").Str(),
+		Creditos:         rawData.Get("creditos").Str(),
+		Facultad:         rawData.Get("facultad").Str(),
+		FechaExtraccion:  rawData.Get("fechaExtraccion").Str(),
+		CuposDisponibles: rawData.Get("cuposDisponibles").Str(),
 		Grupos:           grupos,
 	}
+}
+
+func procesarMateria(page *rod.Page) Asignatura {
+
+	dataAsignatura := page.MustEval(jSExtractorFunctionContent)
+
+	var asignatura Asignatura = parseAsignatura(&dataAsignatura)
+
+	return asignatura
 
 }
 
@@ -182,9 +186,12 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		// Extraer datos
 		timeExtraccion := time.Now()
-		data := procesarMateria(page)
+
+		rawData := page.MustEval(jSExtractorFunctionContent)
+		var dataAsignatura Asignatura = parseAsignatura(&rawData)
+
 		timefinExtraccion := time.Since(timeExtraccion)
-		dataAsignaturas[i] = data
+		dataAsignaturas[i] = dataAsignatura
 
 		// Regresar
 		backButton := page.MustElement(".af_button")
@@ -192,7 +199,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		timefinTotal := time.Since(timeTotal)
 
-		println(data.Nombre, data.Codigo)
+		println(dataAsignatura.Nombre, dataAsignatura.Codigo)
 
 		fmt.Printf("Tiempo carga: %s\n", timefinLoad)
 		fmt.Printf("Tiempo extraccion: %s\n", timefinExtraccion)
