@@ -2,8 +2,8 @@ name: extract-all
 
 on:
   # Diariamente
-  #schedule:
-  #- cron: "30 9 * * *"
+  schedule:
+  - cron: "30 9 * * *"
 
   workflow_dispatch:
 
@@ -69,6 +69,7 @@ jobs:
         with:
           name: data
           path: data.json
+          retention-days: 90
 
       - name: deploy data
         run: MONGO_URI="${{secrets.MONGO_URI}}" node scripts/deploy.js
