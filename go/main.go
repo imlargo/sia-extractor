@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"sia-extractor/core"
 	"sync"
@@ -18,7 +19,7 @@ func main() {
 
 	println("")
 	println("......................................................")
-	println("Tiempo total de ejecución: ", time.Since(initTime))
+	fmt.Printf("Tiempo de ejecuciónnnnnnnnnnn final: %v\n", time.Since(initTime))
 
 }
 
@@ -29,7 +30,7 @@ func extraerTodo() {
 	json.Unmarshal(contentCarreras, &listadoCarreras)
 
 	var wg sync.WaitGroup
-	for _, carrera := range listadoCarreras[0:3] {
+	for _, carrera := range listadoCarreras[0:5] {
 
 		wg.Add(1)
 
