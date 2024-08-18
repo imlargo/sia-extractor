@@ -24,15 +24,12 @@ jobs:
       
       - name: build
         run: |
-          cd go
           ls
           go build
           ls
 
       - name: run
         run: |
-          cd go
-          ls
           ./sia-extractor ${{ matrix.grupo }}
 
       - name: Subir artefacto
