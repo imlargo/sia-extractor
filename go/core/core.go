@@ -18,23 +18,23 @@ type Horario struct {
 }
 
 type Grupo struct {
-	Grupo    string `json:"grupo"`
-	Cupos    int    `json:"cupos"`
-	Profesor string `json:"profesor"`
-	Duracion string `json:"duracion"`
-	Jornada  string `json:"jornada"`
-	Horarios []Horario
+	Grupo    string    `json:"grupo"`
+	Cupos    int       `json:"cupos"`
+	Profesor string    `json:"profesor"`
+	Duracion string    `json:"duracion"`
+	Jornada  string    `json:"jornada"`
+	Horarios []Horario `json:"horarios"`
 }
 
 type Asignatura struct {
-	Nombre           string `json:"nombre"`
-	Codigo           string `json:"codigo"`
-	Tipologia        string `json:"tipologia"`
-	Creditos         string `json:"creditos"`
-	Facultad         string `json:"facultad"`
-	FechaExtraccion  string `json:"fechaExtraccion"`
-	CuposDisponibles string `json:"cuposDisponibles"`
-	Grupos           []Grupo
+	Nombre           string  `json:"nombre"`
+	Codigo           string  `json:"codigo"`
+	Tipologia        string  `json:"tipologia"`
+	Creditos         string  `json:"creditos"`
+	Facultad         string  `json:"facultad"`
+	FechaExtraccion  string  `json:"fechaExtraccion"`
+	CuposDisponibles string  `json:"cuposDisponibles"`
+	Grupos           []Grupo `json:"grupos"`
 }
 
 type Codigo struct {
@@ -159,21 +159,16 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		timeLoad := time.Now()
 
-		timeListadAsignaturas := time.Now()
 		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr") // Delay
-		fmt.Printf("Tiempo listado asignaturas: %s\n", time.Since(timeListadAsignaturas))
 
 		// Cargar asignatura
 		asignatura := asignaturas[i]
-
-		timeNave := time.Now()
 
 		link := asignatura.MustElement(".af_commandLink")
 		link.MustClick()
 
 		// page.MustWaitStable() // Delay
 		page.MustElement(".af_showDetailHeader_content0")
-		fmt.Printf("Tiempo navegacion: %s\n", time.Since(timeNave))
 
 		timefinLoad := time.Since(timeLoad)
 
@@ -193,10 +188,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		timefinTotal := time.Since(timeTotal)
 
 		println(dataAsignatura.Nombre, dataAsignatura.Codigo)
-
-		fmt.Printf("Tiempo carga: %s\n", timefinLoad)
-		fmt.Printf("Tiempo extraccion: %s\n", timefinExtraccion)
-		fmt.Printf("Tiempo total: %s\n", timefinTotal)
 
 		tiemposTotales[i] = timefinTotal
 		tiemposCarga[i] = timefinLoad
@@ -220,14 +211,13 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	println(".............................")
 
-	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
+	fmt.Printf("Tiempo de ejecución, %s %s\n", codigo.Carrera, elapsedTime)
 	println("--- Tiempos promedios ---")
 	println("Promedio total: ", (promedioTotal / float64(size)))
 	println("Promedio carga: ", (promedioCarga / float64(size)))
 	println("Promedio extraccion: ", (promedioExtraccion / float64(size)))
 
 	println("")
-	println("Finalizado")
 
 	return dataAsignaturas
 
