@@ -30,7 +30,7 @@ func extraerTodo() {
 	json.Unmarshal(contentCarreras, &listadoCarreras)
 
 	var wg sync.WaitGroup
-	for _, carrera := range listadoCarreras[0:3] {
+	for _, carrera := range listadoCarreras[0:1] {
 
 		wg.Add(1)
 

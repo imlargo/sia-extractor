@@ -9,22 +9,20 @@ import (
 	"github.com/go-rod/rod"
 )
 
-/*
 type Horario struct {
-	inicio string
-	fin    string
-	dia    string
+	Inicio string `json:"inicio"`
+	Fin    string `json:"fin"`
+	Dia    string `json:"dia"`
 }
 
 type Grupo struct {
-	grupo    string
-	cupos    int
-	profesor string
-	duracion string
-	jornada  string
-	horarios []Horario
+	Grupo    string `json:"grupo"`
+	Cupos    int    `json:"cupos"`
+	Profesor string `json:"profesor"`
+	Duracion string `json:"duracion"`
+	Jornada  string `json:"jornada"`
+	Horarios []Horario
 }
-*/
 
 type Asignatura struct {
 	Nombre           string `json:"nombre"`
@@ -34,7 +32,7 @@ type Asignatura struct {
 	Facultad         string `json:"facultad"`
 	FechaExtraccion  string `json:"fechaExtraccion"`
 	CuposDisponibles string `json:"cuposDisponibles"`
-	// grupos           []Grupo
+	Grupos           []Grupo
 }
 
 type Codigo struct {
@@ -74,6 +72,33 @@ var Paths = Path{
 func procesarMateria(page *rod.Page) Asignatura {
 
 	dataAsignatura := page.MustEval(jSExtractorFunctionContent)
+
+	rawGrupos := dataAsignatura.Get("grupos").Arr()
+	var grupos []Grupo = make([]Grupo, len(rawGrupos))
+
+	for i, rawGrupo := range rawGrupos {
+
+		rawHorarios := rawGrupo.Get("horarios").Arr()
+		var horarios []Horario = make([]Horario, len(rawHorarios))
+
+		for j, rawHorario := range rawHorarios {
+			horarios[j] = Horario{
+				Inicio: rawHorario.Get("inicio").Str(),
+				Fin:    rawHorario.Get("fin").Str(),
+				Dia:    rawHorario.Get("dia").Str(),
+			}
+		}
+
+		grupos[i] = Grupo{
+			Grupo:    rawGrupo.Get("grupo").Str(),
+			Cupos:    rawGrupo.Get("cupos").Int(),
+			Profesor: rawGrupo.Get("profesor").Str(),
+			Duracion: rawGrupo.Get("duracion").Str(),
+			Jornada:  rawGrupo.Get("jornada").Str(),
+			Horarios: horarios,
+		}
+
+	}
 
 	return Asignatura{
 		Nombre:           dataAsignatura.Get("nombre").Str(),
