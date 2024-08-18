@@ -80,9 +80,7 @@ jobs:
           name: data
           path: old/src/data.json
 
-          
-
       - name: deploy data
         run: |
           cd old
-          MONGO_URI=${{ secrets.MONGO_URI }}  npm run deploy
+          MONGO_URI=${{ secrets.MONGO_URI }} node src/deploy.js
