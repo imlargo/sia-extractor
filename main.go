@@ -21,6 +21,18 @@ func main() {
 		return
 	}
 
+	if args[0] == "paths" {
+		println("Creando paths")
+		core.CreatePathsCarreras()
+		return
+	}
+
+	if args[0] == "group" {
+		println("Agrupando carreras")
+		core.GenerarGruposCarreras()
+		return
+	}
+
 	grupoAsignado, _ := strconv.Atoi(args[0])
 
 	println("Grupo asignado: ", grupoAsignado)
@@ -39,7 +51,7 @@ func main() {
 func extraerTodo(indexGrupo int) {
 
 	var listadoGrupos [][]map[string]string
-	contentGrupos, _ := os.ReadFile("data/grupos.json")
+	contentGrupos, _ := os.ReadFile(core.Path_Grupos)
 	json.Unmarshal(contentGrupos, &listadoGrupos)
 	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo]
 

@@ -32,6 +32,7 @@ type Asignatura struct {
 	Tipologia        string  `json:"tipologia"`
 	Creditos         string  `json:"creditos"`
 	Facultad         string  `json:"facultad"`
+	Carrera          string  `json:"carrera"`
 	FechaExtraccion  string  `json:"fechaExtraccion"`
 	CuposDisponibles string  `json:"cuposDisponibles"`
 	Grupos           []Grupo `json:"grupos"`
@@ -59,10 +60,10 @@ const (
 	SIA_URL          string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
 	ValueNivel       string = "Pregrado"
 	ValueSede        string = "1102 SEDE MEDELLÍN"
-	Path_Carreras    string = "carreras.json"
 	Tipologia_All    string = "TODAS MENOS  LIBRE ELECCIÓN"
 	SizeGrupo        int    = 3
-	Path_Grupos      string = "grupos.json"
+	Path_Carreras    string = "data/carreras.json"
+	Path_Grupos      string = "data/grupos.json"
 	Path_JsExtractor string = "src/core/getData.js"
 )
 
@@ -74,7 +75,7 @@ var Paths = Path{
 	Tipologia: "#pt1\\:r1\\:0\\:soc4\\:\\:content",
 }
 
-func parseAsignatura(rawData *gson.JSON) Asignatura {
+func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 	rawGrupos := rawData.Get("grupos").Arr()
 
 	var grupos []Grupo = make([]Grupo, len(rawGrupos))
@@ -107,7 +108,8 @@ func parseAsignatura(rawData *gson.JSON) Asignatura {
 		Codigo:           rawData.Get("codigo").Str(),
 		Tipologia:        rawData.Get("tipologia").Str(),
 		Creditos:         rawData.Get("creditos").Str(),
-		Facultad:         rawData.Get("facultad").Str(),
+		Facultad:         codigo.Facultad,
+		Carrera:          codigo.Carrera,
 		FechaExtraccion:  rawData.Get("fechaExtraccion").Str(),
 		CuposDisponibles: rawData.Get("cuposDisponibles").Str(),
 		Grupos:           grupos,
@@ -171,7 +173,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
-		var dataAsignatura Asignatura = parseAsignatura(&rawData)
+		var dataAsignatura Asignatura = parseAsignatura(&rawData, &codigo)
 
 		timefinExtraccion := time.Since(timeExtraccion)
 		dataAsignaturas[i] = dataAsignatura
