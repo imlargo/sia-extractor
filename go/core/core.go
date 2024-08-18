@@ -153,10 +153,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
-		println(i, " / ", size)
-
 		timeTotal := time.Now()
-
 		timeLoad := time.Now()
 
 		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr") // Delay
@@ -171,10 +168,9 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		page.MustElement(".af_showDetailHeader_content0")
 
 		timefinLoad := time.Since(timeLoad)
-
-		// Extraer datos
 		timeExtraccion := time.Now()
 
+		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
 		var dataAsignatura Asignatura = parseAsignatura(&rawData)
 
@@ -186,9 +182,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		backButton.MustClick()
 
 		timefinTotal := time.Since(timeTotal)
-
-		println(dataAsignatura.Nombre, dataAsignatura.Codigo)
-
 		tiemposTotales[i] = timefinTotal
 		tiemposCarga[i] = timefinLoad
 		tiemposExtraccion[i] = timefinExtraccion
