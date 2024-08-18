@@ -86,7 +86,7 @@ func procesarMateria(page *rod.Page) Asignatura {
 
 }
 
-func GetAsignaturasCarrera(codigo Codigo) {
+func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
@@ -196,12 +196,11 @@ func GetAsignaturasCarrera(codigo Codigo) {
 	println("Promedio carga: ", (promedioCarga / float64(size)))
 	println("Promedio extraccion: ", (promedioExtraccion / float64(size)))
 
-	// Guardar datos de asignaturas en archivo json
-	dataAsignaturasJSON, _ := json.Marshal(dataAsignaturas)
-	os.WriteFile("asignaturas.json", dataAsignaturasJSON, 0644)
-
 	println("")
 	println("Finalizado")
+
+	return dataAsignaturas
+
 }
 
 func LoadJSExtractor() string {
