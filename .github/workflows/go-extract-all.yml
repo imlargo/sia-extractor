@@ -43,19 +43,18 @@ jobs:
     needs: [extract]
     runs-on: ubuntu-latest
     steps:
-
+      - uses: actions/checkout@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      
       - name: Descargar artefactos
         uses: actions/download-artifact@v4
         with:
           path: artifacts
           pattern: artifact-*
           merge-multiple: true
-
-      - uses: actions/checkout@v4
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
 
       - name: Instalar dependencias
         run: |
@@ -64,6 +63,7 @@ jobs:
 
       - name: Mostrar artefactos
         run: |
+          ls
           cd artifacts
           ls
 
