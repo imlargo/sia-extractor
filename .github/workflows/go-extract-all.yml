@@ -7,6 +7,7 @@ on:
 
   workflow_dispatch:
 
+
 jobs:
   extract:
     strategy:
@@ -79,29 +80,9 @@ jobs:
           name: data
           path: old/src/data.json
 
+          
+
       - name: deploy data
         run: |
           cd old
-          npm run deploy
-
-      #- name: deploy data
-      #  run: npm run deploy
-
-      #
-#
-#- name: Deploy data
-#  run: |
-#    git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/imlargo/api.git
-#
-#    rm -r 'api/data.json'
-#    cp -r "src/data.json" "api/"
-#
-#    cd api
-#
-#    git config --global user.email "jlargob@unal.edu.co"
-#    git config --global user.name "imlargo"
-#
-#    git add .
-#
-#    git commit -m "Automated: update data materias"
-#    git push
+          MONGO_URI=${{ secrets.MONGO_URI }}  npm run deploy
