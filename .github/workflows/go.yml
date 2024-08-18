@@ -1,6 +1,9 @@
 name: Golang build
 
 on:
+  push:
+    branches: [ "main" ]
+
   workflow_dispatch:
 
 jobs:
@@ -26,4 +29,4 @@ jobs:
       run: |
         cd go
         ls
-        ./sia-extractor
+        ./sia-extractor 1
