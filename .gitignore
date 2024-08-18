@@ -2,3 +2,5 @@ node_modules
 
 go/carreras.json
 go/asignaturas.json
+go/sia-extractor.exe
+go/sia-extractor
