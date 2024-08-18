@@ -25,13 +25,11 @@ jobs:
  
     - name: Build
       run: |
-        cd go
         ls
         go build
         ls
 
     - name: run
       run: |
-        cd go
         ls
         ./sia-extractor ${{ github.event.inputs.group }}
