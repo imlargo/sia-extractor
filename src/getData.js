@@ -1,18 +1,5 @@
 () => {
 
-	/*
-	// Ultimo elemento con la clase margin-t af_panelGroupLayout
-	const allContainers = document.querySelectorAll(".margin-t.af_panelGroupLayout");
-	const rawRequisitos = Array.from(allContainers[allContainers.length - 1].querySelectorAll("div"))
-	const isRequisito = rawRequisitos[0].textContent.includes("Condición");
-
-	const requisitos = isRequisito ? rawRequisitos.splice(1).map(div => {
-		const dataSpans = Array.from(div.querySelector("span").querySelectorAll("span"));
-		const [codigo, nombre] = dataSpans.map(span => span.textContent);
-		return { codigo, nombre }
-	}) : [];
-	*/
-
 	// Obtener el nombre de la materia
 	const rawName = document.getElementsByTagName("h2")[0].textContent;
 	const codigo = rawName.match(/\(([^)]+)\)/)[1].trim();
@@ -40,15 +27,54 @@
 	// Obtener los elementos de grupo en la página
 	const elementosGrupo = document.querySelectorAll(".borde.salto:not(.ficha-docente)");
 
+
+	const prerequisitos = []
+
 	// Recorrer cada elemento de grupo
 	for (const elementoGrupo of elementosGrupo) {
+
+		const childItems = elementoGrupo.getElementsByClassName("margin-t")
+
 		// Verificar si el elemento contiene información de prerrequisitos o correquisitos
-		if (elementoGrupo.getElementsByClassName("margin-t")[1] == undefined) {
-			break; // Evitar información de prerrequisitos o correquisitos
+		if (childItems[1] == undefined) {
+			/*
+				Tipo de prerrequisito implica. 
+				M - no se puede matricular la asignatura sin superar el prerrequisito. 
+				O - podrá matricular, pero no ser calificado sin la superación del prerrequisito. 
+				E - o matricula el prerrequisito simultáneamente, o lo ha matriculado alguna vez. 
+				A - anulación por incompatibilidad. Si se matricula de las dos asignaturas afectadas por el prerrequisito y no supera la asignatura llave, las asignaturas afectadas por el prerrequisito aparecerán como anuladas.
+			*/
+
+			const subElementos = childItems[0].childNodes
+
+			const asignaturas = []
+			// Recorrer asignaturas
+			for (let i = 1; i < subElementos.length; i++) {
+				const asignatura = subElementos[i].firstChild.childNodes
+				const codigo = asignatura[0].textContent.trim()
+				const nombre = asignatura[1].textContent.trim()
+
+				asignaturas.push({ codigo, nombre })
+			}
+
+			const encabezado = subElementos[0].firstChild.childNodes
+
+			const tipo = encabezado[3].textContent.trim()
+			const isTodas = encabezado[5].textContent === "[S]"
+			const cantidad = isTodas ? asignaturas.length : parseInt(encabezado[7].textContent.replace(/\[|\]/g, ""))
+
+			prerequisitos.push({
+				tipo: tipo,
+				isTodas: isTodas,
+				cantidad: cantidad,
+				asignaturas: asignaturas
+			})
+			
+			continue;
 		}
 
 		// Obtener los datos del grupo
-		const datosGrupo = elementoGrupo.getElementsByClassName("margin-t")[1].children;
+		const datosGrupo = childItems[1].children;
 
 		// Extraer información del grupo
 		const nombreGrupo = elementoGrupo.getElementsByClassName("af_showDetailHeader_title-text0 ")[0].textContent.replace(/\(.*?\)/g, '').trim();
@@ -94,22 +120,6 @@
 
 		grupos.push(grupo);
 	}
-
-	/*
-
-	const prerrequisitos = elementosGrupo[elementosGrupo.length-1];
-	const hasRequisitos = prerrequisitos.getElementsByClassName("margin-t")[1] == undefined;
-
-	const requisitos = hasRequisitos ? prerrequisitos.parentElement.querySelectorAll(".borde.salto.af_panelGroupLayout").map(container => {
-		const listado = Array.from(container.firstChild.childNodes);
-		const datos = listado.shift();
-		return listado.map(req => Array.from(req.firstChild.childNodes).map(node => node.textContent))
-	}) : [];
-
-	if (hasRequisitos) {
-		console.log(requisitos);
-	}
-	*/
 	
 	// Crear objeto para la materia con los datos procesados
 	const materia = {
@@ -120,6 +130,7 @@
 		facultad: facultad.toString(),
 		fechaExtraccion: fechaExtraccion.toString(),
 		cuposDisponibles: cuposDisponibles.toString(),
+		prerequisitos: prerequisitos,
 		grupos: grupos,
 	};
 

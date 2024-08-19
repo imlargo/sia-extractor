@@ -11,6 +11,13 @@ import (
 	"github.com/ysmood/gson"
 )
 
+type Prerequisito struct {
+	Tipo        string              `json:"tipo"`
+	IsTodas     bool                `json:"isTodas"`
+	Cantidad    int                 `json:"cantidad"`
+	Asignaturas []map[string]string `json:"asignaturas"`
+}
+
 type Horario struct {
 	Inicio string `json:"inicio"`
 	Fin    string `json:"fin"`
@@ -27,15 +34,16 @@ type Grupo struct {
 }
 
 type Asignatura struct {
-	Nombre           string  `json:"nombre" bson:"nombre"`
-	Codigo           string  `json:"codigo" bson:"codigo"`
-	Tipologia        string  `json:"tipologia" bson:"tipologia"`
-	Creditos         string  `json:"creditos" bson:"creditos"`
-	Facultad         string  `json:"facultad" bson:"facultad"`
-	Carrera          string  `json:"carrera" bson:"carrera"`
-	FechaExtraccion  string  `json:"fechaExtraccion" bson:"fechaExtraccion"`
-	CuposDisponibles string  `json:"cuposDisponibles" bson:"cuposDisponibles"`
-	Grupos           []Grupo `json:"grupos" bson:"grupos"`
+	Nombre           string         `json:"nombre" bson:"nombre"`
+	Codigo           string         `json:"codigo" bson:"codigo"`
+	Tipologia        string         `json:"tipologia" bson:"tipologia"`
+	Creditos         string         `json:"creditos" bson:"creditos"`
+	Facultad         string         `json:"facultad" bson:"facultad"`
+	Carrera          string         `json:"carrera" bson:"carrera"`
+	FechaExtraccion  string         `json:"fechaExtraccion" bson:"fechaExtraccion"`
+	CuposDisponibles string         `json:"cuposDisponibles" bson:"cuposDisponibles"`
+	Prerequisitos    []Prerequisito `json:"prerequisitos" bson:"prerequisitos"`
+	Grupos           []Grupo        `json:"grupos" bson:"grupos"`
 }
 
 type Codigo struct {
@@ -77,9 +85,9 @@ var Paths = Path{
 
 func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 	rawGrupos := rawData.Get("grupos").Arr()
-
 	var grupos []Grupo = make([]Grupo, len(rawGrupos))
 
+	// Agregar grupos
 	for i, rawGrupo := range rawGrupos {
 		rawHorarios := rawGrupo.Get("horarios").Arr()
 		var horarios []Horario = make([]Horario, len(rawHorarios))
@@ -100,7 +108,29 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 			Jornada:  rawGrupo.Get("jornada").Str(),
 			Horarios: horarios,
 		}
+	}
 
+	// Agregar prerequisitos
+	rawPrerequisitos := rawData.Get("prerequisitos").Arr()
+	prerequisitos := make([]Prerequisito, len(rawPrerequisitos))
+
+	for i, rawPrerequisito := range rawPrerequisitos {
+		rawAsignaturas := rawPrerequisito.Get("asignaturas").Arr()
+		var asignaturas []map[string]string = make([]map[string]string, len(rawAsignaturas))
+
+		for j, rawAsignatura := range rawAsignaturas {
+			asignaturas[j] = map[string]string{
+				"codigo": rawAsignatura.Get("codigo").Str(),
+				"nombre": rawAsignatura.Get("nombre").Str(),
+			}
+		}
+
+		prerequisitos[i] = Prerequisito{
+			Tipo:        rawPrerequisito.Get("tipo").Str(),
+			IsTodas:     rawPrerequisito.Get("isTodas").Bool(),
+			Cantidad:    rawPrerequisito.Get("cantidad").Int(),
+			Asignaturas: asignaturas,
+		}
 	}
 
 	return Asignatura{
@@ -112,6 +142,7 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 		Carrera:          codigo.Carrera,
 		FechaExtraccion:  rawData.Get("fechaExtraccion").Str(),
 		CuposDisponibles: rawData.Get("cuposDisponibles").Str(),
+		Prerequisitos:    prerequisitos,
 		Grupos:           grupos,
 	}
 }
