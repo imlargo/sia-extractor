@@ -2,7 +2,7 @@
 
 Este repositorio contiene un conjunto de herramientas para extraer, procesar y desplegar datos del Sistema de Información Académica (SIA) de la Universidad Nacional de Colombia para alimentar los datos de mi aplicacion web de horarios **"Pegaso"**.
 
-Ejemplo de datos extraidos
+Ejemplo de datos extraidos de una asignatura
 
 ```json
 {
