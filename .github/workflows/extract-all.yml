@@ -41,10 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Configurar Node.js
-        uses: actions/setup-node@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          node-version: "20"
+          go-version-file: 'go.mod'
+          cache-dependency-path: "go.sum"
       
       - name: Descargar artefactos
         uses: actions/download-artifact@v4
@@ -53,12 +55,8 @@ jobs:
           pattern: artifact-*
           merge-multiple: true
 
-      - name: Instalar dependencias
-        run: |
-          npm install
-
-      - name: Consolidar datos
-        run: node scripts/merge.js
+      - name: Consolidar y desplegar datos
+        run: MONGO_URI="${{secrets.MONGO_URI}}" go run . deploy
 
       - name: Guardar datos
         uses: actions/upload-artifact@v4
@@ -66,6 +64,3 @@ jobs:
           name: data
           path: data.json
           retention-days: 90
-
-      - name: deploy data
-        run: MONGO_URI="${{secrets.MONGO_URI}}" node scripts/deploy.js

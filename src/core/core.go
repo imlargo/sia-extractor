@@ -27,15 +27,15 @@ type Grupo struct {
 }
 
 type Asignatura struct {
-	Nombre           string  `json:"nombre"`
-	Codigo           string  `json:"codigo"`
-	Tipologia        string  `json:"tipologia"`
-	Creditos         string  `json:"creditos"`
-	Facultad         string  `json:"facultad"`
-	Carrera          string  `json:"carrera"`
-	FechaExtraccion  string  `json:"fechaExtraccion"`
-	CuposDisponibles string  `json:"cuposDisponibles"`
-	Grupos           []Grupo `json:"grupos"`
+	Nombre           string  `json:"nombre" bson:"nombre"`
+	Codigo           string  `json:"codigo" bson:"codigo"`
+	Tipologia        string  `json:"tipologia" bson:"tipologia"`
+	Creditos         string  `json:"creditos" bson:"creditos"`
+	Facultad         string  `json:"facultad" bson:"facultad"`
+	Carrera          string  `json:"carrera" bson:"carrera"`
+	FechaExtraccion  string  `json:"fechaExtraccion" bson:"fechaExtraccion"`
+	CuposDisponibles string  `json:"cuposDisponibles" bson:"cuposDisponibles"`
+	Grupos           []Grupo `json:"grupos" bson:"grupos"`
 }
 
 type Codigo struct {
