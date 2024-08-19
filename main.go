@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -9,6 +10,9 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
@@ -25,6 +29,11 @@ func main() {
 	if args[0] == "paths" {
 		println("Creando paths")
 		core.CreatePathsCarreras()
+		return
+	}
+
+	if args[0] == "mongo" {
+		saveInDatabase()
 		return
 	}
 
@@ -103,4 +112,28 @@ func extraerTodo(indexGrupo int) {
 	filename := strconv.Itoa(indexGrupo+1) + ".json"
 	finalAsignaturasJSON, _ := json.Marshal(finalAsignaturas)
 	os.WriteFile(filename, finalAsignaturasJSON, 0644)
+}
+
+func saveInDatabase() {
+	var uri string = os.Getenv("MONGO_URI")
+
+	if uri == "" {
+		println("No se ha definido la variable de entorno MONGO_URI")
+		return
+	}
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+
+	coll := client.Database("asignaturas").Collection("asignaturas")
+
+	fmt.Println("Connected to MongoDB!", coll.Name())
 }
