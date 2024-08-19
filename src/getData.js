@@ -123,13 +123,13 @@
 	
 	// Crear objeto para la materia con los datos procesados
 	const materia = {
-		nombre: nombreMateria.toString(),
-		codigo: codigo.toString(),
-		tipologia: tipologia.toString(),
-		creditos: creditos.toString(),
-		facultad: facultad.toString(),
-		fechaExtraccion: fechaExtraccion.toString(),
-		cuposDisponibles: cuposDisponibles.toString(),
+		nombre: nombreMateria,
+		codigo: codigo,
+		tipologia: tipologia,
+		creditos: parseInt(creditos),
+		facultad: facultad,
+		fechaExtraccion: fechaExtraccion,
+		cuposDisponibles: cuposDisponibles,
 		prerequisitos: prerequisitos,
 		grupos: grupos,
 	};

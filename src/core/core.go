@@ -37,11 +37,11 @@ type Asignatura struct {
 	Nombre           string         `json:"nombre" bson:"nombre"`
 	Codigo           string         `json:"codigo" bson:"codigo"`
 	Tipologia        string         `json:"tipologia" bson:"tipologia"`
-	Creditos         string         `json:"creditos" bson:"creditos"`
+	Creditos         int            `json:"creditos" bson:"creditos"`
 	Facultad         string         `json:"facultad" bson:"facultad"`
 	Carrera          string         `json:"carrera" bson:"carrera"`
 	FechaExtraccion  string         `json:"fechaExtraccion" bson:"fechaExtraccion"`
-	CuposDisponibles string         `json:"cuposDisponibles" bson:"cuposDisponibles"`
+	CuposDisponibles int            `json:"cuposDisponibles" bson:"cuposDisponibles"`
 	Prerequisitos    []Prerequisito `json:"prerequisitos" bson:"prerequisitos"`
 	Grupos           []Grupo        `json:"grupos" bson:"grupos"`
 }
@@ -137,11 +137,11 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 		Nombre:           rawData.Get("nombre").Str(),
 		Codigo:           rawData.Get("codigo").Str(),
 		Tipologia:        rawData.Get("tipologia").Str(),
-		Creditos:         rawData.Get("creditos").Str(),
+		Creditos:         rawData.Get("creditos").Int(),
 		Facultad:         codigo.Facultad,
 		Carrera:          codigo.Carrera,
 		FechaExtraccion:  rawData.Get("fechaExtraccion").Str(),
-		CuposDisponibles: rawData.Get("cuposDisponibles").Str(),
+		CuposDisponibles: rawData.Get("cuposDisponibles").Int(),
 		Prerequisitos:    prerequisitos,
 		Grupos:           grupos,
 	}
