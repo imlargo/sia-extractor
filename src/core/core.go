@@ -123,7 +123,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	println("Iniciando...")
 	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
 	println("Cargado. ok")
-	println("")
 
 	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
 	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
@@ -136,27 +135,18 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	for _, checkbox := range checkboxesDias {
 		checkbox.MustClick()
 	}
-	println("Campos seleccionados")
+
+	println("Campos seleccionados...ejecutando búsqueda")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustElement(".af_button_link").MustClick()
 	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
 
 	println("Asignaturas encontradas: ", size)
-	println()
 
 	var dataAsignaturas []Asignatura = make([]Asignatura, size)
-
-	var tiemposTotales []time.Duration = make([]time.Duration, size)
-	var tiemposCarga []time.Duration = make([]time.Duration, size)
-	var tiemposExtraccion []time.Duration = make([]time.Duration, size)
-
-	startTime := time.Now()
-
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
-		timeTotal := time.Now()
-		timeLoad := time.Now()
 
 		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
@@ -168,51 +158,16 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		page.MustElement(".af_showDetailHeader_content0")
 
-		timefinLoad := time.Since(timeLoad)
-		timeExtraccion := time.Now()
-
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
-		var dataAsignatura Asignatura = parseAsignatura(&rawData, &codigo)
-
-		timefinExtraccion := time.Since(timeExtraccion)
-		dataAsignaturas[i] = dataAsignatura
+		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
 
 		// Regresar
 		backButton := page.MustElement(".af_button")
 		backButton.MustClick()
-
-		timefinTotal := time.Since(timeTotal)
-		tiemposTotales[i] = timefinTotal
-		tiemposCarga[i] = timefinLoad
-		tiemposExtraccion[i] = timefinExtraccion
-
 	}
-
-	elapsedTime := time.Since(startTime)
-
-	promedioTotal := 0.0
-	promedioCarga := 0.0
-	promedioExtraccion := 0.0
-
-	for i := 0; i < size; i++ {
-		promedioTotal += (tiemposTotales[i].Seconds())
-		promedioCarga += (tiemposCarga[i].Seconds())
-		promedioExtraccion += (tiemposExtraccion[i].Seconds())
-	}
-
-	println(".............................")
-
-	fmt.Printf("Tiempo de ejecución, %s %s\n", codigo.Carrera, elapsedTime)
-	println("--- Tiempos promedios ---")
-	println("Promedio total: ", (promedioTotal / float64(size)))
-	println("Promedio carga: ", (promedioCarga / float64(size)))
-	println("Promedio extraccion: ", (promedioExtraccion / float64(size)))
-
-	println("")
 
 	return dataAsignaturas
-
 }
 
 func LoadJSExtractor() string {
