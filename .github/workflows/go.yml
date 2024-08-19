@@ -28,6 +28,12 @@ jobs:
 
     - name: run
       run: |
-        ls
         ./sia-extractor ${{ github.event.inputs.group }}
         ls
+
+    - name: Guardar datos
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-data
+        path: ${{ github.event.inputs.group }}.json
+        retention-days: 1
