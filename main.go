@@ -34,6 +34,16 @@ func main() {
 		return
 	}
 
+	if args[0] == "electivas" {
+		println("Electivas")
+		electivas := core.ExtraerElectivas()
+
+		electivasJSON, _ := json.Marshal(electivas)
+		os.WriteFile("electivas.json", electivasJSON, 0644)
+
+		return
+	}
+
 	if args[0] == "deploy" {
 		println("Consolidando datos")
 		utils.DeployData()

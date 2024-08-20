@@ -212,7 +212,7 @@ func CreatePathsCarreras() {
 
 	startTime := time.Now()
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustPage(SIA_URL)
+	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
 	println("Cargado. ok")
 	println("")
 
@@ -295,4 +295,96 @@ func GenerarGruposCarreras() {
 	dataGruposJSON, _ := json.Marshal(grupos)
 	os.WriteFile(Path_Grupos, dataGruposJSON, 0644)
 
+}
+
+func ExtraerElectivas() []Asignatura {
+	println("Holi")
+
+	var codigo Codigo = Codigo{
+		Nivel:     ValueNivel,
+		Sede:      ValueSede,
+		Facultad:  "3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS",
+		Carrera:   "3512 CIENCIA POLÍTICA",
+		Tipologia: "LIBRE ELECCIÓN",
+	}
+
+	jSExtractorFunctionContent = LoadJSExtractor()
+
+	println("Iniciando...")
+	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
+	println("Cargado. ok")
+
+	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
+	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
+	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
+	page.MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
+	time.Sleep(2 * time.Second)
+
+	err := page.MustElement(Paths.Tipologia).MustClick().Select([]string{`^LIBRE ELECCIÓN$`}, true, rod.SelectorTypeRegex)
+	if err != nil {
+		println("Error: ", err)
+	}
+
+	println("screen tomado")
+
+	// Porque tipo
+	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc5\\:\\:content").MustClick().MustSelect("Por facultad y plan")
+
+	println("Tipo seleccionado")
+
+	// POrque sede
+	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc10\\:\\:content").MustClick().MustSelect("1102 SEDE MEDELLÍN")
+	println("Sede seleccionada")
+
+	// porque facultad
+	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc6\\:\\:content").MustClick().MustSelect("3 SEDE MEDELLÍN")
+	println("Facultad seleccionada")
+
+	// porque plan
+	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc7\\:\\:content").MustClick().MustSelect("3CLE COMPONENTE DE LIBRE ELECCIÓN")
+	println("Plan seleccionado")
+
+	// select all checkboxes
+	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
+	for _, checkbox := range checkboxesDias {
+		checkbox.MustClick()
+	}
+
+	println("Campos seleccionados...ejecutando búsqueda")
+
+	// Hacer clic en el botón para ejecutar la búsqueda
+	page.MustElement(".af_button_link").MustClick()
+
+	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+
+	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
+
+	println("Asignaturas encontradas: ", size)
+
+	var dataAsignaturas []Asignatura = make([]Asignatura, size)
+	// Recorrer asignaturas
+	for i := 0; i < size; i++ {
+
+		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+
+		// Cargar asignatura
+		asignatura := asignaturas[i]
+
+		link := asignatura.MustElement(".af_commandLink")
+		link.MustClick()
+
+		page.MustElement(".af_showDetailHeader_content0")
+
+		// Extraer datos
+		rawData := page.MustEval(jSExtractorFunctionContent)
+		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
+
+		println("Asignatura: ", dataAsignaturas[i].Codigo, dataAsignaturas[i].Nombre)
+
+		// Regresar
+		backButton := page.MustElement(".af_button")
+		backButton.MustClick()
+	}
+
+	return dataAsignaturas
 }
