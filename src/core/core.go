@@ -184,8 +184,8 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		// Cargar asignatura
 		asignatura := asignaturas[i]
 
-		link := asignatura.MustElement(".af_commandLink")
-		link.MustClick()
+		// Click link
+		asignatura.MustElement(".af_commandLink").MustClick()
 
 		page.MustElement(".af_showDetailHeader_content0")
 
@@ -194,8 +194,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
 
 		// Regresar
-		backButton := page.MustElement(".af_button")
-		backButton.MustClick()
+		page.MustElement(".af_button").MustClick()
 	}
 
 	return dataAsignaturas
