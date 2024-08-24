@@ -149,17 +149,19 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 
 func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
+	timeout := 15 * time.Second
+
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
+	page := rod.New().MustConnect().MustIncognito().Timeout(60 * time.Second).MustPage(SIA_URL)
 	println("Cargado. ok")
 
-	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
-	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
-	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
-	page.MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
-	page.MustWaitStable().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
+	page.Timeout(timeout).MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
+	page.Timeout(timeout).MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
+	page.Timeout(timeout).MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
+	page.Timeout(timeout).MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
+	page.Timeout(timeout).MustWaitStable().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
 
 	// select all checkboxes
 	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
@@ -171,7 +173,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustElement(".af_button_link").MustClick()
-	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
+	size := len(page.Timeout(timeout).MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
 
 	println("Asignaturas encontradas: ", size)
 
@@ -179,7 +181,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas := page.Timeout(timeout).MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar asignatura
 		asignatura := asignaturas[i]
@@ -187,7 +189,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		// Click link
 		asignatura.MustElement(".af_commandLink").MustClick()
 
-		page.MustElement(".af_showDetailHeader_content0")
+		page.Timeout(timeout).MustElement(".af_showDetailHeader_content0")
 
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
