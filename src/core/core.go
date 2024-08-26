@@ -152,7 +152,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().Timeout(60 * time.Second).MustPage(SIA_URL)
+	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
 	println("Cargado. ok")
 
 	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
