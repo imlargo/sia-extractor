@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
+	"slices"
 	"strconv"
 	"sync"
 
@@ -111,7 +112,29 @@ func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
 	var wg sync.WaitGroup
 	var wg2 sync.WaitGroup
 
+	listado := make(map[string]map[string][]string)
+
 	for facultad, carreras := range *data {
+
+		// crear el listado con datos
+
+		listado[facultad] = map[string][]string{}
+		for carrera, asignaturas := range carreras {
+
+			tipologias := make([]string, 0)
+
+			for _, asignatura := range asignaturas {
+
+				if slices.Contains(tipologias, asignatura.Tipologia) {
+					continue
+				}
+
+				tipologias = append(tipologias, asignatura.Tipologia)
+			}
+
+			listado[facultad][carrera] = tipologias
+		}
+
 		wg.Add(1)
 
 		go func(facultad string, carreras map[string][]core.Asignatura) {
@@ -155,6 +178,9 @@ func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
 
 		}
 	}
+
+	query := bson.D{{Key: "_id", Value: "listado"}}
+	collCarreras.ReplaceOne(context.TODO(), query, listado)
 
 	wg.Wait()
 	wg2.Wait()
