@@ -106,6 +106,7 @@ func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
 
 	collFacultades := client.Database("asignaturas").Collection("asignaturas")
 	collCarreras := client.Database("asignaturas").Collection("carreras")
+	collConfig := client.Database("asignaturas").Collection("config")
 
 	fmt.Println("Connected to MongoDB!")
 
@@ -180,7 +181,7 @@ func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
 	}
 
 	query := bson.D{{Key: "_id", Value: "listado"}}
-	collCarreras.ReplaceOne(context.TODO(), query, listado)
+	collConfig.ReplaceOne(context.TODO(), query, listado)
 
 	wg.Wait()
 	wg2.Wait()
