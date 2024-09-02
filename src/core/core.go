@@ -151,46 +151,23 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	println("Iniciando...")
-	browser := rod.New().MustConnect()
-	page := browser.MustIncognito().MustPage(SIA_URL)
-	defer browser.MustClose()
+	page, browser := LoadPageCarrera(&codigo)
 
-	println("Cargado. ok")
+	asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
-	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
-	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
-	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
-	page.MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
-	page.MustWaitStable().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
-
-	println("Selected...")
-
-	// select all checkboxes
-	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
-	for _, checkbox := range checkboxesDias {
-		checkbox.MustClick()
-	}
-
-	println("Campos seleccionados...ejecutando búsqueda")
-
-	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustElement(".af_button_link").MustClick()
-	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
-
+	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
 	var dataAsignaturas []Asignatura = make([]Asignatura, size)
+
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
-		// Cargar asignatura
-		asignatura := asignaturas[i]
-
-		// Click link
-		asignatura.MustWaitStable().MustElement(".af_commandLink").MustClick()
+		// Cargar link
+		link := asignaturas[i].MustElement(".af_commandLink")
+		link.MustClick()
 
 		page.MustElement(".af_showDetailHeader_content0")
 
@@ -202,6 +179,10 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		// Regresar
 		page.MustElement(".af_button").MustClick()
 	}
+
+	println("Cerrando navegador...")
+	browser.MustClose()
+	println("Navegador cerrado")
 
 	return dataAsignaturas
 }
