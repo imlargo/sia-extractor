@@ -23,11 +23,5 @@ func LoadPageCarrera(codigo *Codigo) (*rod.Page, *rod.Browser) {
 		checkbox.MustClick()
 	}
 
-	println("Campos seleccionados...ejecutando búsqueda")
-
-	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustElement(".af_button_link").MustClick()
-	page.MustWaitStable()
-
 	return page, browser
 }

@@ -152,10 +152,12 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	page, browser := LoadPageCarrera(&codigo)
+	println("Campos seleccionados...ejecutando búsqueda")
 
-	asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+	// Hacer clic en el botón para ejecutar la búsqueda
+	page.MustWaitStable().MustElement(".af_button_link").MustClick()
 
-	size := len(asignaturas)
+	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
 	println("Asignaturas encontradas: ", size)
 
 	var dataAsignaturas []Asignatura = make([]Asignatura, size)
@@ -163,7 +165,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar link
 		link := asignaturas[i].MustElement(".af_commandLink")
