@@ -152,7 +152,10 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
+	browser := rod.New().MustConnect()
+	page := browser.MustIncognito().MustPage(SIA_URL)
+	defer browser.MustClose()
+
 	println("Cargado. ok")
 
 	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
@@ -160,6 +163,8 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
 	page.MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
 	page.MustWaitStable().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
+
+	println("Selected...")
 
 	// select all checkboxes
 	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
@@ -192,6 +197,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
 		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
+		println(dataAsignaturas[i].Nombre)
 
 		// Regresar
 		page.MustElement(".af_button").MustClick()
