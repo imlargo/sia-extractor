@@ -184,13 +184,13 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar asignatura
 		asignatura := asignaturas[i]
 
 		// Click link
-		asignatura.MustElement(".af_commandLink").MustClick()
+		asignatura.MustWaitStable().MustElement(".af_commandLink").MustClick()
 
 		page.MustElement(".af_showDetailHeader_content0")
 
