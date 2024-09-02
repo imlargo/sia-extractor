@@ -1,0 +1,27 @@
+name: extract-all
+
+on:
+  push:
+    branches: [ "main" ]
+
+  workflow_dispatch:
+    
+
+jobs:
+  extract:
+    strategy:
+      matrix:
+        grupo: [1, 2, 3, 4, 5]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: "go.sum"
+      
+      - name: run
+        run: |
+          go run . ${{ matrix.grupo }}

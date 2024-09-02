@@ -168,8 +168,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar link
-		link := asignaturas[i].MustElement(".af_commandLink")
-		link.MustClick()
+		asignaturas[i].MustElement(".af_commandLink").MustClick()
 
 		page.MustElement(".af_showDetailHeader_content0")
 
