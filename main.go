@@ -52,6 +52,16 @@ func main() {
 
 	grupoAsignado, _ := strconv.Atoi(args[0])
 
+	if args[0] == "test" {
+		println("Iniciando test")
+		initTime := time.Now()
+		println("Grupo asignado: ", grupoAsignado)
+
+		testExtraccion(grupoAsignado - 1)
+		fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
+		return
+	}
+
 	println("Grupo asignado: ", grupoAsignado)
 
 	initTime := time.Now()
@@ -63,6 +73,39 @@ func main() {
 
 	// core.GenerarGruposCarreras()
 
+}
+
+func testExtraccion(indexGrupo int) {
+	var listadoGrupos [][]map[string]string
+	contentGrupos, _ := os.ReadFile(core.Path_Grupos)
+	json.Unmarshal(contentGrupos, &listadoGrupos)
+	println("Accediendo a grupo: ", indexGrupo+1)
+	var grupoAsignado []map[string]string = listadoGrupos[indexGrupo+1]
+
+	var wg sync.WaitGroup
+	for _, carrera := range grupoAsignado {
+
+		wg.Add(1)
+
+		go func(carrera map[string]string) {
+			defer wg.Done()
+
+			codigo := core.Codigo{
+				Nivel:     core.ValueNivel,
+				Sede:      core.ValueSede,
+				Facultad:  carrera["facultad"],
+				Carrera:   carrera["carrera"],
+				Tipologia: core.Tipologia_All,
+			}
+
+			println("INICIANDOOOO: ", codigo.Carrera)
+
+			core.GetAsignaturasCarrera(codigo)
+
+		}(carrera)
+	}
+
+	wg.Wait()
 }
 
 func extraerTodo(indexGrupo int) {

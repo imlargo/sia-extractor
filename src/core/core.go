@@ -151,7 +151,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	page, browser := LoadPageCarrera(&codigo)
+	page, _ := LoadPageCarrera(&codigo)
 	println("Campos seleccionados...ejecutando búsqueda")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
@@ -180,9 +180,7 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		page.MustElement(".af_button").MustClick()
 	}
 
-	println("Cerrando navegador...")
-	browser.MustClose()
-	println("Navegador cerrado")
+	println("Finalizado...")
 
 	return dataAsignaturas
 }
