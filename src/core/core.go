@@ -174,7 +174,6 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
 		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
-		println(dataAsignaturas[i].Nombre)
 
 		// Regresar
 		page.MustElement(".af_button").MustClick()
