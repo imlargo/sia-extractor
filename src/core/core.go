@@ -5,192 +5,13 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
-	"github.com/ysmood/gson"
 )
-
-type Prerequisito struct {
-	Tipo        string              `json:"tipo"`
-	IsTodas     bool                `json:"isTodas"`
-	Cantidad    int                 `json:"cantidad"`
-	Asignaturas []map[string]string `json:"asignaturas"`
-}
-
-type Horario struct {
-	Inicio string `json:"inicio"`
-	Fin    string `json:"fin"`
-	Dia    string `json:"dia"`
-}
-
-type Grupo struct {
-	Grupo    string    `json:"grupo"`
-	Cupos    int       `json:"cupos"`
-	Profesor string    `json:"profesor"`
-	Duracion string    `json:"duracion"`
-	Jornada  string    `json:"jornada"`
-	Horarios []Horario `json:"horarios"`
-}
-
-type Asignatura struct {
-	Nombre           string         `json:"nombre" bson:"nombre"`
-	Codigo           string         `json:"codigo" bson:"codigo"`
-	Tipologia        string         `json:"tipologia" bson:"tipologia"`
-	Creditos         int            `json:"creditos" bson:"creditos"`
-	Facultad         string         `json:"facultad" bson:"facultad"`
-	Carrera          string         `json:"carrera" bson:"carrera"`
-	FechaExtraccion  string         `json:"fechaExtraccion" bson:"fechaExtraccion"`
-	CuposDisponibles int            `json:"cuposDisponibles" bson:"cuposDisponibles"`
-	Prerequisitos    []Prerequisito `json:"prerequisitos" bson:"prerequisitos"`
-	Grupos           []Grupo        `json:"grupos" bson:"grupos"`
-}
-
-type Codigo struct {
-	Nivel     string
-	Sede      string
-	Facultad  string
-	Carrera   string
-	Tipologia string
-}
-
-type Path struct {
-	Nivel     string
-	Sede      string
-	Facultad  string
-	Carrera   string
-	Tipologia string
-}
 
 var jSExtractorFunctionContent string = ""
-
-const (
-	SIA_URL          string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
-	ValueNivel       string = "Pregrado"
-	ValueSede        string = "1102 SEDE MEDELLÍN"
-	Tipologia_All    string = "TODAS MENOS  LIBRE ELECCIÓN"
-	SizeGrupo        int    = 3
-	Path_Carreras    string = "data/carreras.json"
-	Path_Grupos      string = "data/grupos.json"
-	Path_JsExtractor string = "src/getData.js"
-)
-
-var Paths = Path{
-	Nivel:     "#pt1\\:r1\\:0\\:soc1\\:\\:content",
-	Sede:      "#pt1\\:r1\\:0\\:soc9\\:\\:content",
-	Facultad:  "#pt1\\:r1\\:0\\:soc2\\:\\:content",
-	Carrera:   "#pt1\\:r1\\:0\\:soc3\\:\\:content",
-	Tipologia: "#pt1\\:r1\\:0\\:soc4\\:\\:content",
-}
-
-func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
-	rawGrupos := rawData.Get("grupos").Arr()
-	var grupos []Grupo = make([]Grupo, len(rawGrupos))
-
-	// Agregar grupos
-	for i, rawGrupo := range rawGrupos {
-		rawHorarios := rawGrupo.Get("horarios").Arr()
-		var horarios []Horario = make([]Horario, len(rawHorarios))
-
-		for j, rawHorario := range rawHorarios {
-			horarios[j] = Horario{
-				Inicio: rawHorario.Get("inicio").Str(),
-				Fin:    rawHorario.Get("fin").Str(),
-				Dia:    rawHorario.Get("dia").Str(),
-			}
-		}
-
-		grupos[i] = Grupo{
-			Grupo:    rawGrupo.Get("grupo").Str(),
-			Cupos:    rawGrupo.Get("cupos").Int(),
-			Profesor: rawGrupo.Get("profesor").Str(),
-			Duracion: rawGrupo.Get("duracion").Str(),
-			Jornada:  rawGrupo.Get("jornada").Str(),
-			Horarios: horarios,
-		}
-	}
-
-	// Agregar prerequisitos
-	rawPrerequisitos := rawData.Get("prerequisitos").Arr()
-	prerequisitos := make([]Prerequisito, len(rawPrerequisitos))
-
-	for i, rawPrerequisito := range rawPrerequisitos {
-		rawAsignaturas := rawPrerequisito.Get("asignaturas").Arr()
-		var asignaturas []map[string]string = make([]map[string]string, len(rawAsignaturas))
-
-		for j, rawAsignatura := range rawAsignaturas {
-			asignaturas[j] = map[string]string{
-				"codigo": rawAsignatura.Get("codigo").Str(),
-				"nombre": rawAsignatura.Get("nombre").Str(),
-			}
-		}
-
-		prerequisitos[i] = Prerequisito{
-			Tipo:        rawPrerequisito.Get("tipo").Str(),
-			IsTodas:     rawPrerequisito.Get("isTodas").Bool(),
-			Cantidad:    rawPrerequisito.Get("cantidad").Int(),
-			Asignaturas: asignaturas,
-		}
-	}
-
-	return Asignatura{
-		Nombre:           rawData.Get("nombre").Str(),
-		Codigo:           rawData.Get("codigo").Str(),
-		Tipologia:        rawData.Get("tipologia").Str(),
-		Creditos:         rawData.Get("creditos").Int(),
-		Facultad:         codigo.Facultad,
-		Carrera:          codigo.Carrera,
-		FechaExtraccion:  rawData.Get("fechaExtraccion").Str(),
-		CuposDisponibles: rawData.Get("cuposDisponibles").Int(),
-		Prerequisitos:    prerequisitos,
-		Grupos:           grupos,
-	}
-}
-
-func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
-
-	jSExtractorFunctionContent = LoadJSExtractor()
-
-	page, _ := LoadPageCarrera(&codigo)
-	println("Campos seleccionados...ejecutando búsqueda")
-
-	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustElement(".af_button_link").MustClick()
-
-	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
-	println("Asignaturas encontradas: ", size)
-
-	var dataAsignaturas []Asignatura = make([]Asignatura, size)
-
-	// Recorrer asignaturas
-	for i := 0; i < size; i++ {
-
-		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
-
-		// Cargar link
-		asignaturas[i].MustElement(".af_commandLink").MustClick()
-
-		page.MustElement(".af_showDetailHeader_content0")
-
-		// Extraer datos
-		rawData := page.MustEval(jSExtractorFunctionContent)
-		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
-
-		// Regresar
-		page.MustElement(".af_button").MustClick()
-	}
-
-	println("Finalizado...")
-
-	return dataAsignaturas
-}
-
-func LoadJSExtractor() string {
-	content, _ := os.ReadFile(Path_JsExtractor)
-	JSExtractorFunctionContent := string(content)
-
-	return JSExtractorFunctionContent
-}
 
 func CreatePathsCarreras() {
 
@@ -369,6 +190,92 @@ func ExtraerElectivas() []Asignatura {
 		backButton := page.MustElement(".af_button")
 		backButton.MustClick()
 	}
+
+	return dataAsignaturas
+}
+
+func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
+
+	var listadoGrupos [][]map[string]string
+	bytesGrupos, _ := os.ReadFile(Path_Grupos)
+	json.Unmarshal(bytesGrupos, &listadoGrupos)
+	grupo := listadoGrupos[indexGrupo-1]
+
+	chanAsignaturas := make(chan []Asignatura, len(grupo))
+
+	var wg sync.WaitGroup
+	for _, carrera := range grupo {
+
+		wg.Add(1)
+
+		go func(carrera map[string]string) {
+			defer wg.Done()
+
+			codigo := Codigo{
+				Nivel:     ValueNivel,
+				Sede:      ValueSede,
+				Facultad:  carrera["facultad"],
+				Carrera:   carrera["carrera"],
+				Tipologia: Tipologia_All,
+			}
+
+			println("INICIANDOOOO: ", codigo.Carrera)
+
+			var asignaturas []Asignatura = GetAsignaturasCarrera(codigo)
+
+			chanAsignaturas <- asignaturas
+
+		}(carrera)
+	}
+
+	go func() {
+		wg.Wait()
+		close(chanAsignaturas)
+	}()
+
+	data := make(map[string][]Asignatura)
+	for asignaturas := range chanAsignaturas {
+		carrera := asignaturas[0].Carrera
+		data[carrera] = asignaturas
+	}
+
+	return data
+}
+
+func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
+
+	jSExtractorFunctionContent = LoadJSExtractor()
+
+	page, _ := LoadPageCarrera(&codigo)
+	println("Campos seleccionados...ejecutando búsqueda")
+
+	// Hacer clic en el botón para ejecutar la búsqueda
+	page.MustWaitStable().MustElement(".af_button_link").MustClick()
+
+	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
+	println("Asignaturas encontradas: ", size)
+
+	var dataAsignaturas []Asignatura = make([]Asignatura, size)
+
+	// Recorrer asignaturas
+	for i := 0; i < size; i++ {
+
+		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+
+		// Cargar link
+		asignaturas[i].MustElement(".af_commandLink").MustClick()
+
+		page.MustElement(".af_showDetailHeader_content0")
+
+		// Extraer datos
+		rawData := page.MustEval(jSExtractorFunctionContent)
+		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
+
+		// Regresar
+		page.MustElement(".af_button").MustClick()
+	}
+
+	println("Finalizado...")
 
 	return dataAsignaturas
 }
