@@ -40,13 +40,16 @@ func App() {
 		grupoAsignado, _ := strconv.Atoi(args[1])
 		initTime := time.Now()
 		println("Grupo asignado: ", grupoAsignado)
-		testExtraccion(grupoAsignado - 1)
+		core.ExtraerGrupo(grupoAsignado - 1)
 		fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 	case "extract":
 		grupoAsignado, _ := strconv.Atoi(args[1])
 		println("Grupo asignado: ", grupoAsignado)
 		initTime := time.Now()
-		extraerTodo(grupoAsignado - 1)
+		data := core.ExtraerGrupo(grupoAsignado - 1)
+		filename := strconv.Itoa(grupoAsignado) + ".json"
+		finalAsignaturasJSON, _ := json.Marshal(data)
+		os.WriteFile(filename, finalAsignaturasJSON, 0644)
 		println("")
 		println("......................................................")
 		fmt.Printf("Tiempo de ejecuciónnnnnnnnnnn final: %v\n", time.Since(initTime))

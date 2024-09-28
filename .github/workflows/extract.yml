@@ -22,12 +22,8 @@ jobs:
         go-version-file: 'go.mod'
         cache-dependency-path: "go.sum"
     
-    - run: go build
-
     - name: run
-      run: |
-        ./sia-extractor ${{ github.event.inputs.group }}
-        ls
+      run: go run . extract ${{ github.event.inputs.group }}
 
     - name: Guardar datos
       uses: actions/upload-artifact@v4
