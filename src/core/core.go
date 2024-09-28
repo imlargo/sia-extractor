@@ -251,16 +251,18 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustWaitStable().MustElement(".af_button_link").MustClick()
+	page.MustWaitStable()
 
-	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
+	asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
-	var dataAsignaturas []Asignatura = make([]Asignatura, size)
+	data := make([]Asignatura, size)
 
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
 		// Cargar link
 		asignaturas[i].MustElement(".af_commandLink").MustClick()
@@ -269,7 +271,8 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 		// Extraer datos
 		rawData := page.MustEval(jSExtractorFunctionContent)
-		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
+		data[i] = parseAsignatura(&rawData, &codigo)
+		println(i, "/", size, data[i].Nombre)
 
 		// Regresar
 		page.MustElement(".af_button").MustClick()
@@ -277,5 +280,5 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	println("Finalizado...")
 
-	return dataAsignaturas
+	return data
 }
