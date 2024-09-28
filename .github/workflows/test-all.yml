@@ -1,0 +1,30 @@
+name: extract-all
+
+on:
+  workflow_dispatch:
+
+jobs:
+  extract:
+    strategy:
+      fail-fast: false
+      matrix:
+        grupo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: "go.sum"
+      
+      - name: run
+        run: go run . extract ${{ matrix.grupo }}
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.grupo }}
+          path: ${{ matrix.grupo }}.json
+          retention-days: 1
