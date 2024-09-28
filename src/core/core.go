@@ -250,10 +250,8 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 	println("Campos seleccionados...ejecutando búsqueda")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustElement(".af_button_link").MustClick()
-	page.MustWaitStable()
-
-	asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+	page.MustWaitStable().MustElement(".af_button_link").MustClick().MustWaitStable()
+	asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
