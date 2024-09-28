@@ -219,9 +219,9 @@ func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
 				Tipologia: Tipologia_All,
 			}
 
-			println("INICIANDOOOO: ", codigo.Carrera)
-
+			println("Iniciando: ", codigo.Carrera)
 			var asignaturas []Asignatura = GetAsignaturasCarrera(codigo)
+			println("Finalizado: ", codigo.Carrera)
 
 			chanAsignaturas <- asignaturas
 
