@@ -37,17 +37,17 @@ func App() {
 		utils.DeployData()
 	case "test":
 		println("Iniciando test")
-		grupoAsignado, _ := strconv.Atoi(args[1])
+		grupo, _ := strconv.Atoi(args[1])
 		initTime := time.Now()
-		println("Grupo asignado: ", grupoAsignado)
-		core.ExtraerGrupo(grupoAsignado - 1)
+		println("Grupo asignado: ", grupo)
+		core.ExtraerGrupo(grupo)
 		fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 	case "extract":
-		grupoAsignado, _ := strconv.Atoi(args[1])
-		println("Grupo asignado: ", grupoAsignado)
+		grupo, _ := strconv.Atoi(args[1])
+		println("Grupo asignado: ", grupo)
 		initTime := time.Now()
-		data := core.ExtraerGrupo(grupoAsignado - 1)
-		filename := strconv.Itoa(grupoAsignado) + ".json"
+		data := core.ExtraerGrupo(grupo)
+		filename := strconv.Itoa(grupo) + ".json"
 		finalAsignaturasJSON, _ := json.Marshal(data)
 		os.WriteFile(filename, finalAsignaturasJSON, 0644)
 		println("")

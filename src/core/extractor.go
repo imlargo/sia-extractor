@@ -11,7 +11,7 @@ func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
 	var listadoGrupos [][]map[string]string
 	bytesGrupos, _ := os.ReadFile(Path_Grupos)
 	json.Unmarshal(bytesGrupos, &listadoGrupos)
-	grupo := listadoGrupos[indexGrupo]
+	grupo := listadoGrupos[indexGrupo-1]
 
 	chanAsignaturas := make(chan []Asignatura, len(grupo))
 
