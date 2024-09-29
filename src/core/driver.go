@@ -20,16 +20,16 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page = getPage(browser)
 
 			println("Selecionando...")
-			Sel(page, Paths.Nivel, codigo.Nivel)
-			println("Nivel seleccionado...")
-			Sel(page, Paths.Sede, codigo.Sede)
-			println("Sede seleccionada...")
-			Sel(page, Paths.Facultad, codigo.Facultad)
-			println("Facultad seleccionada...")
-			Sel(page, Paths.Carrera, codigo.Carrera)
-			println("Carrera seleccionada...")
-			Sel(page, Paths.Tipologia, codigo.Tipologia)
-			println("Campos seleccionados...")
+			Sel(page, Paths.Nivel, codigo.Nivel, codigo.Carrera)
+			println("Nivel seleccionado...", codigo.Carrera)
+			Sel(page, Paths.Sede, codigo.Sede, codigo.Carrera)
+			println("Sede seleccionada...", codigo.Carrera)
+			Sel(page, Paths.Facultad, codigo.Facultad, codigo.Carrera)
+			println("Facultad seleccionada...", codigo.Carrera)
+			Sel(page, Paths.Carrera, codigo.Carrera, codigo.Carrera)
+			println("Carrera seleccionada...", codigo.Carrera)
+			Sel(page, Paths.Tipologia, codigo.Tipologia, codigo.Carrera)
+			println("Campos seleccionados...", codigo.Carrera)
 		})
 
 		if err == nil {
@@ -55,17 +55,21 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 	return page, browser
 }
 
-func Sel(page *rod.Page, path string, value string) {
+func Sel(page *rod.Page, path string, value string, carrera string) {
 	// Wait for done
 
+	println("Waiting for stable...", carrera, value)
 	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
+	println("Stable...", carrera, value)
 
 	// Get element
 	el := page.MustElement(path)
+	println("Elemento encontrado...", carrera, value)
 
 	// Click and select
 
 	el.MustClick().MustSelect(value)
+	println("Seleccionado...", carrera, value)
 }
 
 func getPage(browser *rod.Browser) *rod.Page {
