@@ -37,7 +37,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 		}
 
 		intentos++
-		println("Pooling again...")
+		println("Pooling again...", codigo.Carrera)
 		page.MustClose()
 
 		if intentos > 3 {
