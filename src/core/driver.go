@@ -52,11 +52,13 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 
 func Sel(page *rod.Page, path string, value string, t1 time.Duration) {
 	// Wait for done
+
 	page.Timeout(t1).MustWaitStable().CancelTimeout()
 
 	// Get element
-	el := page.Timeout(t1).MustElement(path).CancelTimeout()
+	el := page.MustElement(path)
 
 	// Click and select
+
 	el.MustClick().MustSelect(value)
 }

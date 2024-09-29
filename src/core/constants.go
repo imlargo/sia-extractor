@@ -5,7 +5,7 @@ const (
 	ValueNivel       string = "Pregrado"
 	ValueSede        string = "1102 SEDE MEDELLÍN"
 	Tipologia_All    string = "TODAS MENOS  LIBRE ELECCIÓN"
-	SizeGrupo        int    = 3
+	SizeGrupo        int    = 2
 	Path_Carreras    string = "data/carreras.json"
 	Path_Grupos      string = "data/grupos.json"
 	Path_JsExtractor string = "src/getData.js"
