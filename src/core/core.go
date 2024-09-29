@@ -291,7 +291,7 @@ func getTable(page *rod.Page) rod.Elements {
 	var rows rod.Elements
 
 	for {
-		table := page.MustElement(".af_table_data-table-VH-lines")
+		table := page.MustWaitDOMStable().MustElement(".af_table_data-table-VH-lines")
 		if table == nil {
 			continue
 		}
