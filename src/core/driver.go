@@ -66,8 +66,17 @@ func Sel(page *rod.Page, path string, value string, carrera string) {
 	el := page.MustElement(path)
 	println("Elemento encontrado...", carrera, value)
 
-	// Click and select
+	// Verificar que el elemento tenga options
+	for {
+		el = page.MustElement(path)
+		options := el.MustElements("option")
+		if len(options) != 0 {
+			break
+		}
+	}
 
+	// Click and select
+	el = page.MustElement(path)
 	el.MustClick()
 	println("Clicked...", carrera, value)
 
