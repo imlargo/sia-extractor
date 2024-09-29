@@ -22,12 +22,20 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			println("Selecionando...")
 			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel).MustClick()
 			println("Nivel seleccionado...", codigo.Carrera)
+
+			time.Sleep(5 * time.Second)
 			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
+
+			time.Sleep(5 * time.Second)
 			SelectWithRecover(page, Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
 			println("Facultad seleccionada...", codigo.Carrera)
+
+			time.Sleep(5 * time.Second)
 			SelectWithRecover(page, Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
 			println("Carrera seleccionada...", codigo.Carrera)
+
+			time.Sleep(5 * time.Second)
 			SelectWithRecover(page, Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
 			println("Tipologia seleccionada...", codigo.Carrera)
 		})
@@ -81,17 +89,7 @@ func getPage(browser *rod.Browser) *rod.Page {
 	return page
 }
 
-func Sel(page *rod.Page, path string, value string) {
-	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
-
-	el := page.MustElement(path)
-	el.MustClick().MustSelect(value)
-
-}
-
 func SelectWithRecover(page *rod.Page, path string, value string, prevPath string, prevValue string) {
-	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
-
 	i := 0
 	for {
 		if i > 5 {
@@ -110,7 +108,7 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 			i++
 			println("### Pooling again ###", value)
 			page.MustElement(prevPath).MustClick().MustSelect(prevValue)
-			page.MustWaitStable()
+			time.Sleep(5 * time.Second)
 		}
 	}
 }
