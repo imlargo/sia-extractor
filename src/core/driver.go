@@ -11,6 +11,7 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 	var page *rod.Page
 	timeoutLoad := 15 * time.Second
 	timeoutSelect := 10 * time.Second
+	intentos := 0
 
 	for {
 
@@ -30,8 +31,13 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 			break
 		}
 
+		intentos++
 		println("Pooling again...")
 		page.MustClose()
+
+		if intentos > 3 {
+			panic("Error al cargar la pagina, timeout")
+		}
 
 	}
 
