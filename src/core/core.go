@@ -252,7 +252,8 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 	println("Campos seleccionados...ejecutando búsqueda")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustWaitDOMStable().MustElement(".af_button_link").MustClick()
+	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	page.MustElement(".af_button_link").MustClick()
 	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
 
 	asignaturas := getTable(page)
