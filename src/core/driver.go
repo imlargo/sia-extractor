@@ -107,7 +107,7 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 
 		if len(options) == 0 {
 			i++
-			println("### Pooling again ###")
+			println("### Pooling again ###", value)
 			page.MustElement(prevPath).MustClick().MustSelect(prevValue)
 			page.MustWaitStable()
 		}
