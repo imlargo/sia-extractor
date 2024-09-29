@@ -20,16 +20,35 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page = getPage(browser)
 
 			println("Selecionando...")
-			Sel(page, Paths.Nivel, codigo.Nivel, codigo.Carrera)
-			println("Nivel seleccionado...", codigo.Carrera)
-			Sel(page, Paths.Sede, codigo.Sede, codigo.Carrera)
-			println("Sede seleccionada...", codigo.Carrera)
-			Sel(page, Paths.Facultad, codigo.Facultad, codigo.Carrera)
+			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
+			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
+			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
 			println("Facultad seleccionada...", codigo.Carrera)
-			Sel(page, Paths.Carrera, codigo.Carrera, codigo.Carrera)
-			println("Carrera seleccionada...", codigo.Carrera)
-			Sel(page, Paths.Tipologia, codigo.Tipologia, codigo.Carrera)
-			println("Campos seleccionados...", codigo.Carrera)
+
+			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
+			i := 0
+			for {
+				if i > 5 {
+					panic("Error al cargar la pagina, timeout")
+				}
+
+				selectCarrera := page.MustElement(Paths.Carrera)
+				options := selectCarrera.MustElements("option")
+
+				if len(options) != 0 {
+					selectCarrera.MustClick().MustSelect(codigo.Carrera)
+					break
+				}
+
+				if len(options) == 0 {
+					i++
+					println("### Pooling again ###")
+					page.MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
+					page.MustWaitStable()
+				}
+			}
+
+			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
 		})
 
 		if err == nil {
@@ -53,40 +72,6 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 	}
 
 	return page, browser
-}
-
-func Sel(page *rod.Page, path string, value string, carrera string) {
-	// Wait for done
-
-	println("Waiting for stable...", carrera, value)
-	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
-	println("Stable...", carrera, value)
-
-	// Get element
-	println("Elemento encontrado...", carrera, value)
-
-	// Verificar que el elemento tenga options
-	intentos := 0
-	for {
-		options := page.MustElement(path).MustElements("option")
-		if len(options) != 0 {
-			break
-		}
-		intentos += 1
-		println("Waiting for options...")
-		if intentos > 10 {
-			time.Sleep(3 * time.Second)
-			// panic("Error al cargar la pagina, timeout")
-		}
-	}
-
-	// Click and select
-	el := page.MustElement(path)
-	el.MustClick()
-	println("Clicked...", carrera, value)
-
-	el.MustSelect(value)
-	println("Seleccionado...", carrera, value)
 }
 
 func getPage(browser *rod.Browser) *rod.Page {
