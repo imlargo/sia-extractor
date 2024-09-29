@@ -23,7 +23,7 @@ jobs:
         run: go build
       
       - name: run
-        run: ./sia-extractor extract ${{ matrix.grupo }}
+        run: ./sia-extractor test ${{ matrix.grupo }}
 
       - name: Subir artefacto
         uses: actions/upload-artifact@v4
