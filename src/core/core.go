@@ -256,7 +256,7 @@ func GetAsignaturasCarrera(browser *rod.Browser, codigo Codigo) *[]Asignatura {
 	page.MustWaitStable().MustElement(".af_button_link").MustClick()
 	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
 
-	asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+	asignaturas := getTable(page)
 	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
@@ -284,4 +284,31 @@ func GetAsignaturasCarrera(browser *rod.Browser, codigo Codigo) *[]Asignatura {
 	println("Finalizado...")
 
 	return &data
+}
+
+func getTable(page *rod.Page) rod.Elements {
+
+	var rows rod.Elements
+
+	for {
+		table := page.MustElement(".af_table_data-table-VH-lines")
+		if table == nil {
+			continue
+		}
+
+		tbody := table.MustElement("tbody")
+		if tbody == nil {
+			continue
+		}
+
+		rows = tbody.MustElements("tr")
+		if rows == nil || len(rows) > 100 {
+			continue
+		}
+
+		break
+	}
+
+	return rows
+
 }
