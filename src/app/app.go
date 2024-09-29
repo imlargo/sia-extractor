@@ -40,7 +40,19 @@ func App() {
 		grupo, _ := strconv.Atoi(args[1])
 		initTime := time.Now()
 		println("Grupo asignado: ", grupo)
-		core.ExtraerGrupo(grupo)
+
+		var listadoGrupos [][]map[string]string
+		bytesGrupos, _ := os.ReadFile(core.Path_Grupos)
+		json.Unmarshal(bytesGrupos, &listadoGrupos)
+		carrera := listadoGrupos[grupo-1][0]
+
+		core.GetAsignaturasCarrera(core.Codigo{
+			Nivel:     core.ValueNivel,
+			Sede:      core.ValueSede,
+			Facultad:  carrera["facultad"],
+			Carrera:   carrera["carrera"],
+			Tipologia: core.Tipologia_All,
+		})
 		fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 	case "extract":
 		grupo, _ := strconv.Atoi(args[1])
