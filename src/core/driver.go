@@ -7,10 +7,12 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Browser) {
+func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
 	var page *rod.Page
 	intentos := 0
+
+	browser := rod.New().MustConnect()
 
 	for {
 

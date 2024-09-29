@@ -202,7 +202,6 @@ func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 	grupo := listadoGrupos[indexGrupo-1]
 
 	chanAsignaturas := make(chan *[]Asignatura, len(grupo))
-	browser := rod.New().MustConnect()
 
 	var wg sync.WaitGroup
 	for _, carrera := range grupo {
@@ -221,7 +220,7 @@ func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 			}
 
 			println("Iniciando: ", codigo.Carrera)
-			asignaturas := GetAsignaturasCarrera(browser, codigo)
+			asignaturas := GetAsignaturasCarrera(codigo)
 			println("Finalizado: ", codigo.Carrera)
 
 			chanAsignaturas <- asignaturas
@@ -243,11 +242,11 @@ func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 	return data
 }
 
-func GetAsignaturasCarrera(browser *rod.Browser, codigo Codigo) *[]Asignatura {
+func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	page, _ := LoadPageCarrera(browser, codigo)
+	page, _ := LoadPageCarrera(codigo)
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda")
