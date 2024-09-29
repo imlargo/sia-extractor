@@ -20,40 +20,16 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page = getPage(browser)
 
 			println("Selecionando...")
-			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
+			Sel(page, Paths.Nivel, codigo.Nivel)
 			println("Nivel seleccionado...", codigo.Carrera)
-			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
+			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
-			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
+			SelectWithRecover(page, Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
 			println("Facultad seleccionada...", codigo.Carrera)
+			SelectWithRecover(page, Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
+			println("Carrera seleccionada...", codigo.Carrera)
+			SelectWithRecover(page, Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
 
-			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
-			i := 0
-			for {
-				if i > 5 {
-					panic("Error al cargar la pagina, timeout")
-				}
-
-				selectCarrera := page.MustElement(Paths.Carrera)
-				options := selectCarrera.MustElements("option")
-
-				if len(options) != 0 {
-					selectCarrera.MustClick().MustSelect(codigo.Carrera)
-					println("Carrera seleccionada...", codigo.Carrera)
-					break
-				}
-
-				if len(options) == 0 {
-					i++
-					println("### Pooling again ###")
-					page.MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
-					page.MustWaitStable()
-					println("Facultad seleccionada...", codigo.Carrera)
-				}
-			}
-
-			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
-			println("Tipologia seleccionada...", codigo.Carrera)
 		})
 
 		if err == nil {
@@ -103,4 +79,37 @@ func getPage(browser *rod.Browser) *rod.Page {
 	page.Timeout(15 * time.Second).MustNavigate(SIA_URL).MustWaitStable().CancelTimeout()
 
 	return page
+}
+
+func Sel(page *rod.Page, path string, value string) {
+	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
+
+	el := page.MustElement(path)
+	el.MustClick().MustSelect(value)
+}
+
+func SelectWithRecover(page *rod.Page, path string, value string, prevPath string, prevValue string) {
+	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
+
+	i := 0
+	for {
+		if i > 5 {
+			panic("Error al cargar la pagina, timeout")
+		}
+
+		selectEl := page.MustElement(path)
+		options := selectEl.MustElements("option")
+
+		if len(options) != 0 {
+			selectEl.MustClick().MustSelect(value)
+			break
+		}
+
+		if len(options) == 0 {
+			i++
+			println("### Pooling again ###")
+			page.MustElement(prevPath).MustClick().MustSelect(prevValue)
+			page.MustWaitStable()
+		}
+	}
 }
