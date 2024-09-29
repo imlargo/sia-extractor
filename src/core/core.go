@@ -291,12 +291,13 @@ func getTable(page *rod.Page) rod.Elements {
 	var rows rod.Elements
 
 	for {
-		table := page.MustWaitDOMStable().MustElement(".af_table_data-table-VH-lines")
+		table := page.MustElement(".af_table_data-table-VH-lines")
+		time.Sleep(5 * time.Second)
 		if table == nil {
 			continue
 		}
 
-		tbody := page.MustWaitDOMStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody")
+		tbody := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody")
 		if tbody == nil {
 			continue
 		}
