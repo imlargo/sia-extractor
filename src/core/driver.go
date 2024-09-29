@@ -20,8 +20,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page = getPage(browser)
 
 			println("Selecionando...")
-			Sel(page, Paths.Nivel, codigo.Nivel)
-			Sel(page, Paths.Nivel, codigo.Nivel)
+			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel).MustClick()
 			println("Nivel seleccionado...", codigo.Carrera)
 			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
@@ -87,6 +86,7 @@ func Sel(page *rod.Page, path string, value string) {
 
 	el := page.MustElement(path)
 	el.MustClick().MustSelect(value)
+
 }
 
 func SelectWithRecover(page *rod.Page, path string, value string, prevPath string, prevValue string) {
