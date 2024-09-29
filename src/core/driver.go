@@ -63,20 +63,25 @@ func Sel(page *rod.Page, path string, value string, carrera string) {
 	println("Stable...", carrera, value)
 
 	// Get element
-	el := page.MustElement(path)
 	println("Elemento encontrado...", carrera, value)
 
 	// Verificar que el elemento tenga options
+	intentos := 0
 	for {
-		el = page.MustElement(path)
-		options := el.MustElements("option")
+		options := page.MustElement(path).MustElements("option")
 		if len(options) != 0 {
 			break
+		}
+		intentos += 1
+		println("Waiting for options...")
+		if intentos > 10 {
+			time.Sleep(3 * time.Second)
+			// panic("Error al cargar la pagina, timeout")
 		}
 	}
 
 	// Click and select
-	el = page.MustElement(path)
+	el := page.MustElement(path)
 	el.MustClick()
 	println("Clicked...", carrera, value)
 

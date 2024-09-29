@@ -262,23 +262,25 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 	data := make([]Asignatura, size)
 
 	// Recorrer asignaturas
-	for i := 0; i < size; i++ {
+	/*
+		for i := 0; i < size; i++ {
 
-		asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+			asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
 
-		// Cargar link
-		asignaturas[i].MustElement(".af_commandLink").MustClick()
+			// Cargar link
+			asignaturas[i].MustElement(".af_commandLink").MustClick()
 
-		page.MustElement(".af_showDetailHeader_content0")
+			page.MustElement(".af_showDetailHeader_content0")
 
-		// Extraer datos
-		rawData := page.MustEval(jSExtractorFunctionContent)
-		data[i] = parseAsignatura(&rawData, &codigo)
-		// println(i, "/", size, data[i].Nombre)
+			// Extraer datos
+			rawData := page.MustEval(jSExtractorFunctionContent)
+			data[i] = parseAsignatura(&rawData, &codigo)
+			println(i, "/", size, data[i].Nombre)
 
-		// Regresar
-		page.MustElement(".af_button").MustClick()
-	}
+			// Regresar
+			page.MustElement(".af_button").MustClick()
+		}
+	*/
 
 	println("Finalizado...")
 
