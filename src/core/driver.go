@@ -4,30 +4,29 @@ import (
 	"time"
 
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/proto"
 )
 
 func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Browser) {
 
 	var page *rod.Page
-	timeoutLoad := 15 * time.Second
-	timeoutSelect := 10 * time.Second
 	intentos := 0
 
 	for {
 
 		err := rod.Try(func() {
-			page = browser.MustIncognito().MustPage(SIA_URL).Timeout(timeoutLoad).MustWaitStable().CancelTimeout()
+			page = getPage(browser)
 
 			println("Selecionando...")
-			Sel(page, Paths.Nivel, codigo.Nivel, timeoutSelect)
+			Sel(page, Paths.Nivel, codigo.Nivel)
 			println("Nivel seleccionado...")
-			Sel(page, Paths.Sede, codigo.Sede, timeoutSelect)
+			Sel(page, Paths.Sede, codigo.Sede)
 			println("Sede seleccionada...")
-			Sel(page, Paths.Facultad, codigo.Facultad, timeoutSelect)
+			Sel(page, Paths.Facultad, codigo.Facultad)
 			println("Facultad seleccionada...")
-			Sel(page, Paths.Carrera, codigo.Carrera, timeoutSelect)
+			Sel(page, Paths.Carrera, codigo.Carrera)
 			println("Carrera seleccionada...")
-			Sel(page, Paths.Tipologia, codigo.Tipologia, timeoutSelect)
+			Sel(page, Paths.Tipologia, codigo.Tipologia)
 			println("Campos seleccionados...")
 		})
 
@@ -54,10 +53,10 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 	return page, browser
 }
 
-func Sel(page *rod.Page, path string, value string, t1 time.Duration) {
+func Sel(page *rod.Page, path string, value string) {
 	// Wait for done
 
-	page.Timeout(t1).MustWaitStable().CancelTimeout()
+	page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout()
 
 	// Get element
 	el := page.MustElement(path)
@@ -65,4 +64,30 @@ func Sel(page *rod.Page, path string, value string, t1 time.Duration) {
 	// Click and select
 
 	el.MustClick().MustSelect(value)
+}
+
+func getPage(browser *rod.Browser) *rod.Page {
+	page := browser.MustIncognito().MustPage("")
+
+	router := page.HijackRequests()
+
+	cancelReq := func(ctx *rod.Hijack) {
+		if ctx.Request.Type() == proto.NetworkResourceTypeImage {
+			ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
+			return
+		}
+		ctx.ContinueRequest(&proto.FetchContinueRequest{})
+	}
+
+	router.MustAdd("*.png", cancelReq)
+	router.MustAdd("*.svg", cancelReq)
+	router.MustAdd("*.gif", cancelReq)
+	router.MustAdd("*.css", cancelReq)
+
+	// since we are only hijacking a specific page, even using the "*" won't affect much of the performance
+	go router.Run()
+
+	page.Timeout(15 * time.Second).MustNavigate(SIA_URL).MustWaitStable().CancelTimeout()
+
+	return page
 }
