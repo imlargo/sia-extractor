@@ -20,7 +20,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page = getPage(browser)
 
 			println("Selecionando...")
-			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel).MustClick()
+			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
 			println("Nivel seleccionado...", codigo.Carrera)
 
 			time.Sleep(5 * time.Second)
@@ -100,8 +100,12 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 		selectEl := page.MustElement(path)
 		options := selectEl.MustElements("option")
 
+		println("Loadded options")
+
 		if len(options) != 0 {
-			selectEl.MustClick().MustSelect(value).MustClick()
+			println("Selecting value")
+			selectEl.MustClick()
+			selectEl.MustSelect(value)
 			println("Clicked")
 			break
 		}
@@ -109,7 +113,9 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 		if len(options) == 0 {
 			i++
 			println("### Pooling again ###", value)
-			page.MustElement(prevPath).MustClick().MustSelect(prevValue).MustClick()
+			el2 := page.MustElement(prevPath)
+			el2.MustClick()
+			el2.MustSelect(prevValue)
 			time.Sleep(5 * time.Second)
 		}
 	}
