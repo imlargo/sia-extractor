@@ -68,7 +68,10 @@ func Sel(page *rod.Page, path string, value string, carrera string) {
 
 	// Click and select
 
-	el.MustClick().MustSelect(value)
+	el.MustClick()
+	println("Clicked...", carrera, value)
+
+	el.MustSelect(value)
 	println("Seleccionado...", carrera, value)
 }
 
