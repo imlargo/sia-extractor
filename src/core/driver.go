@@ -1,18 +1,39 @@
 package core
 
-import "github.com/go-rod/rod"
+import (
+	"time"
+
+	"github.com/go-rod/rod"
+)
 
 func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Browser) {
 
-	page := browser.MustIncognito().MustPage(SIA_URL).MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	var page *rod.Page
+	timeoutLoad := 15 * time.Second
+	timeoutSelect := 10 * time.Second
 
-	println("Selecionando...")
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
-	println("Campos seleccionados...")
+	for {
+
+		err := rod.Try(func() {
+			page = browser.MustIncognito().MustPage(SIA_URL).Timeout(timeoutLoad).MustWaitStable().CancelTimeout()
+
+			println("Selecionando...")
+			Sel(page, Paths.Nivel, codigo.Nivel, timeoutSelect)
+			Sel(page, Paths.Sede, codigo.Sede, timeoutSelect)
+			Sel(page, Paths.Facultad, codigo.Facultad, timeoutSelect)
+			Sel(page, Paths.Carrera, codigo.Carrera, timeoutSelect)
+			Sel(page, Paths.Tipologia, codigo.Tipologia, timeoutSelect)
+			println("Campos seleccionados...")
+		})
+
+		if err == nil {
+			break
+		}
+
+		println("Pooling again...")
+		page.MustClose()
+
+	}
 
 	// select all checkboxes
 	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
@@ -21,4 +42,15 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 	}
 
 	return page, browser
+}
+
+func Sel(page *rod.Page, path string, value string, t1 time.Duration) {
+	// Wait for done
+	page.Timeout(t1).MustWaitStable().CancelTimeout()
+
+	// Get element
+	el := page.Timeout(t1).MustElement(path).CancelTimeout()
+
+	// Click and select
+	el.MustClick().MustSelect(value)
 }
