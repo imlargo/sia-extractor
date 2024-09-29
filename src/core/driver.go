@@ -21,6 +21,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
 			println("Selecionando...")
 			Sel(page, Paths.Nivel, codigo.Nivel)
+			Sel(page, Paths.Nivel, codigo.Nivel)
 			println("Nivel seleccionado...", codigo.Carrera)
 			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
