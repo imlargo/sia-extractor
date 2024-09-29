@@ -21,7 +21,9 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
 			println("Selecionando...")
 			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
+			println("Nivel seleccionado...", codigo.Carrera)
 			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
+			println("Sede seleccionada...", codigo.Carrera)
 			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
 			println("Facultad seleccionada...", codigo.Carrera)
 
@@ -37,6 +39,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
 				if len(options) != 0 {
 					selectCarrera.MustClick().MustSelect(codigo.Carrera)
+					println("Carrera seleccionada...", codigo.Carrera)
 					break
 				}
 
@@ -45,10 +48,12 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 					println("### Pooling again ###")
 					page.MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
 					page.MustWaitStable()
+					println("Facultad seleccionada...", codigo.Carrera)
 				}
 			}
 
 			page.Timeout(15 * time.Second).MustWaitStable().CancelTimeout().MustElement(Paths.Tipologia).MustClick().MustSelect(codigo.Tipologia)
+			println("Tipologia seleccionada...", codigo.Carrera)
 		})
 
 		if err == nil {
