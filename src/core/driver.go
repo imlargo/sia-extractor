@@ -20,9 +20,13 @@ func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Brows
 
 			println("Selecionando...")
 			Sel(page, Paths.Nivel, codigo.Nivel, timeoutSelect)
+			println("Nivel seleccionado...")
 			Sel(page, Paths.Sede, codigo.Sede, timeoutSelect)
+			println("Sede seleccionada...")
 			Sel(page, Paths.Facultad, codigo.Facultad, timeoutSelect)
+			println("Facultad seleccionada...")
 			Sel(page, Paths.Carrera, codigo.Carrera, timeoutSelect)
+			println("Carrera seleccionada...")
 			Sel(page, Paths.Tipologia, codigo.Tipologia, timeoutSelect)
 			println("Campos seleccionados...")
 		})
