@@ -29,7 +29,7 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			SelectWithRecover(page, Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
 			println("Carrera seleccionada...", codigo.Carrera)
 			SelectWithRecover(page, Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
-
+			println("Tipologia seleccionada...", codigo.Carrera)
 		})
 
 		if err == nil {
