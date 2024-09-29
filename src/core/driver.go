@@ -2,10 +2,9 @@ package core
 
 import "github.com/go-rod/rod"
 
-func LoadPageCarrera(codigo *Codigo) (*rod.Page, *rod.Browser) {
+func LoadPageCarrera(browser *rod.Browser, codigo Codigo) (*rod.Page, *rod.Browser) {
 
-	browser := rod.New().MustConnect()
-	page := browser.MustIncognito().MustPage(SIA_URL)
+	page := browser.MustIncognito().MustPage(SIA_URL).MustWaitStable().MustWaitIdle().MustWaitDOMStable()
 
 	println("Selecionando...")
 	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
