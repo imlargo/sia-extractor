@@ -296,7 +296,7 @@ func getTable(page *rod.Page) rod.Elements {
 			continue
 		}
 
-		tbody := table.MustElement("tbody")
+		tbody := page.MustWaitDOMStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody")
 		if tbody == nil {
 			continue
 		}
