@@ -1,9 +1,6 @@
 name: test
 
 on:
-  push:
-    branches: [ "develop" ]
-
   workflow_dispatch:
 
 jobs:
@@ -17,6 +14,12 @@ jobs:
           go-version-file: 'go.mod'
           cache-dependency-path: "go.sum"
       
+      - name: build
+        run: go build
+
+      - name: parallel
+        run: sudo apt-get install parallel
+
       - name: run
         run: |
-          go run . test 1
+          parallel -j 15 --ungroup './sia-extractor extract {1}' ::: {1..15}

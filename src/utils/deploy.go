@@ -37,7 +37,7 @@ func DeployData() {
 	var dataAsignaturas = make(map[string][]core.Asignatura)
 
 	for i := 0; i < totalGrupos; i++ {
-		var path string = "artifacts/" + strconv.Itoa(i+1) + ".json"
+		var path string = "./" + strconv.Itoa(i+1) + ".json"
 		var data map[string][]core.Asignatura
 
 		// unmarshall json

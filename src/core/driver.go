@@ -96,23 +96,23 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 			panic("Error al cargar la pagina, timeout")
 		}
 
-		println("Selecting element")
+		// println("Selecting element")
 		selectEl := page.MustElement(path)
 		options := selectEl.MustElements("option")
 
-		println("Loadded options")
+		// println("Loadded options")
 
 		if len(options) != 0 {
-			println("Selecting value")
+			// println("Selecting value")
 			selectEl.MustClick()
 			selectEl.MustSelect(value)
-			println("Clicked")
+			// println("Clicked")
 			break
 		}
 
 		if len(options) == 0 {
 			i++
-			println("### Pooling again ###", value)
+			// println("### Pooling again ###", value)
 			el2 := page.MustElement(prevPath)
 			el2.MustClick()
 			el2.MustSelect(prevValue)
