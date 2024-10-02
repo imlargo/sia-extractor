@@ -11,7 +11,7 @@ jobs:
   extract:
     strategy:
       matrix:
-        grupo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+        grupo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,9 +21,12 @@ jobs:
         with:
           go-version-file: 'go.mod'
           cache-dependency-path: "go.sum"
-      
+        
+      - name: build
+        run: go build
+        
       - name: run
-        run: go run . extract ${{ matrix.grupo }}
+        run: ./sia-extractor extract ${{ matrix.grupo }}
 
       - name: Subir artefacto
         uses: actions/upload-artifact@v4

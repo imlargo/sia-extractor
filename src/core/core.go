@@ -194,14 +194,14 @@ func ExtraerElectivas() []Asignatura {
 	return dataAsignaturas
 }
 
-func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
+func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 
 	var listadoGrupos [][]map[string]string
 	bytesGrupos, _ := os.ReadFile(Path_Grupos)
 	json.Unmarshal(bytesGrupos, &listadoGrupos)
 	grupo := listadoGrupos[indexGrupo-1]
 
-	chanAsignaturas := make(chan []Asignatura, len(grupo))
+	chanAsignaturas := make(chan *[]Asignatura, len(grupo))
 
 	var wg sync.WaitGroup
 	for _, carrera := range grupo {
@@ -220,7 +220,7 @@ func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
 			}
 
 			println("Iniciando: ", codigo.Carrera)
-			var asignaturas []Asignatura = GetAsignaturasCarrera(codigo)
+			asignaturas := GetAsignaturasCarrera(codigo)
 			println("Finalizado: ", codigo.Carrera)
 
 			chanAsignaturas <- asignaturas
@@ -233,25 +233,30 @@ func ExtraerGrupo(indexGrupo int) map[string][]Asignatura {
 		close(chanAsignaturas)
 	}()
 
-	data := make(map[string][]Asignatura)
+	data := make(map[string]*[]Asignatura)
 	for asignaturas := range chanAsignaturas {
-		carrera := asignaturas[0].Carrera
+		carrera := (*asignaturas)[0].Carrera
 		data[carrera] = asignaturas
 	}
 
 	return data
 }
 
-func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
+func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	page, _ := LoadPageCarrera(&codigo)
+	page, _ := LoadPageCarrera(codigo)
+	defer page.MustClose()
+
 	println("Campos seleccionados...ejecutando búsqueda")
 
 	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustElement(".af_button_link").MustClick().MustWaitStable()
-	asignaturas := page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	page.MustElement(".af_button_link").MustClick()
+	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+
+	asignaturas := getTable(page)
 	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
@@ -278,5 +283,33 @@ func GetAsignaturasCarrera(codigo Codigo) []Asignatura {
 
 	println("Finalizado...")
 
-	return data
+	return &data
+}
+
+func getTable(page *rod.Page) rod.Elements {
+
+	var rows rod.Elements
+
+	for {
+		table := page.MustElement(".af_table_data-table-VH-lines")
+		time.Sleep(5 * time.Second)
+		if table == nil {
+			continue
+		}
+
+		tbody := table.MustElement("tbody")
+		if tbody == nil {
+			continue
+		}
+
+		rows = tbody.MustElements("tr")
+		if rows == nil || len(rows) > 100 {
+			continue
+		}
+
+		break
+	}
+
+	return rows
+
 }

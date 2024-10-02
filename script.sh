@@ -1,0 +1,1 @@
+parallel -j 3 --ungroup 'go run . test {1}' ::: {1..3}
