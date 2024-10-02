@@ -249,7 +249,7 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 	page, _ := LoadPageCarrera(codigo)
 	defer page.MustClose()
 
-	println("Campos seleccionados...ejecutando búsqueda")
+	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
