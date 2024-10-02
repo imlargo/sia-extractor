@@ -23,7 +23,7 @@ type DocumentCarrera struct {
 }
 
 const (
-	totalGrupos int = 13
+	totalGrupos int = 39
 )
 
 func DeployData() {
