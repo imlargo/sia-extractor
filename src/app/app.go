@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
-	"sia-extractor/src/utils"
+	"sia-extractor/src/deploy"
 	"strconv"
 	"time"
 )
@@ -34,7 +34,7 @@ func App() {
 		os.WriteFile("electivas.json", electivasJSON, 0644)
 	case "deploy":
 		println("Consolidando datos")
-		utils.DeployData()
+		deploy.DeployData()
 	case "test":
 		println("Iniciando test")
 		grupo, _ := strconv.Atoi(args[1])
