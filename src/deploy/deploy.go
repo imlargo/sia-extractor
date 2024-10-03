@@ -1,4 +1,4 @@
-package utils
+package deploy
 
 import (
 	"context"
@@ -6,13 +6,11 @@ import (
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
-	"slices"
 	"strconv"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type DocumentCarrera struct {
@@ -28,6 +26,28 @@ const (
 
 func DeployData() {
 
+	client := getMongoDbClient()
+	fmt.Println("Connected to MongoDB!")
+
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+
+	merged := mergeAllData()
+
+	bytesMerged, _ := json.Marshal(merged)
+	os.WriteFile("data.json", bytesMerged, 0644)
+
+	updateListadoCarreras(client, &merged)
+	saveInDatabase(client, &merged)
+	updateFechaExtraccion(client, merged["3068 FACULTAD DE MINAS"]["3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"][0].FechaExtraccion)
+
+}
+
+func mergeAllData() map[string]map[string][]core.Asignatura {
+	// Cargar listado de carreras
 	var carreras []map[string]string
 	bytes, _ := os.ReadFile(core.Path_Carreras)
 	json.Unmarshal(bytes, &carreras)
@@ -37,26 +57,29 @@ func DeployData() {
 	var dataAsignaturas = make(map[string][]core.Asignatura)
 
 	for i := 0; i < totalGrupos; i++ {
-		var path string = "./" + strconv.Itoa(i+1) + ".json"
+		// Cargar datos de asignaturas de carreras
+		path := "./" + strconv.Itoa(i+1) + ".json"
 		var data map[string][]core.Asignatura
 
-		// unmarshall json
+		// Leer datos de asignaturas
 		bytes, _ := os.ReadFile(path)
 		json.Unmarshal(bytes, &data)
 
+		// Agregar asignaturas a consolidado
 		for carrera, asignaturas := range data {
 			dataAsignaturas[carrera] = asignaturas
 		}
 	}
 
+	// Agrupar carreras por facultad
 	carrerasAgrupadas := groupBy(carreras, func(carrera map[string]string) string {
 		return carrera["facultad"]
 	})
 
-	var merged = make(map[string]map[string][]core.Asignatura)
+	merged := make(map[string]map[string][]core.Asignatura)
 	for facultad, carreras := range carrerasAgrupadas {
 
-		var dataFacultad = make(map[string][]core.Asignatura)
+		dataFacultad := make(map[string][]core.Asignatura)
 		for _, carrera := range carreras {
 			var valueCarrera string = carrera["carrera"]
 			dataFacultad[valueCarrera] = dataAsignaturas[valueCarrera]
@@ -66,75 +89,47 @@ func DeployData() {
 
 	}
 
-	dataMerged, _ := json.Marshal(merged)
-	os.WriteFile("data.json", dataMerged, 0644)
-
-	saveInDatabase(&merged)
-
+	return merged
 }
 
-func groupBy[T any](array []map[string]T, function func(map[string]T) string) map[string][]map[string]T {
-
-	result := make(map[string][]map[string]T)
-
-	for _, item := range array {
-		key := function(item)
-		result[key] = append(result[key], item)
-	}
-
-	return result
-}
-
-func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
-	var uri string = os.Getenv("MONGO_URI")
-
-	if uri == "" {
-		println("No se ha definido la variable de entorno MONGO_URI")
-		return
-	}
-
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
-	if err != nil {
-		panic(err)
-	}
-
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
-
-	collFacultades := client.Database("asignaturas").Collection("asignaturas")
-	collCarreras := client.Database("asignaturas").Collection("carreras")
+func updateFechaExtraccion(client *mongo.Client, lastUpdate string) {
 	collConfig := client.Database("asignaturas").Collection("config")
+	query := bson.D{{Key: "_id", Value: "metadata"}}
 
-	fmt.Println("Connected to MongoDB!")
+	metadata := map[string]string{
+		"lastUpdated": lastUpdate,
+	}
 
-	var wg sync.WaitGroup
-	var wg2 sync.WaitGroup
+	collConfig.ReplaceOne(context.TODO(), query, metadata)
+}
+
+func updateListadoCarreras(client *mongo.Client, data *map[string]map[string][]core.Asignatura) {
 
 	listado := make(map[string]map[string][]string)
 
 	for facultad, carreras := range *data {
-
 		// crear el listado con datos
-
 		listado[facultad] = map[string][]string{}
 		for carrera, asignaturas := range carreras {
-
-			tipologias := make([]string, 0)
-
-			for _, asignatura := range asignaturas {
-
-				if slices.Contains(tipologias, asignatura.Tipologia) {
-					continue
-				}
-
-				tipologias = append(tipologias, asignatura.Tipologia)
-			}
-
-			listado[facultad][carrera] = tipologias
+			tipologiasUnicas := getTipologiasUnicas(asignaturas)
+			listado[facultad][carrera] = tipologiasUnicas
 		}
+	}
+
+	collConfig := client.Database("asignaturas").Collection("config")
+	query := bson.D{{Key: "_id", Value: "listado"}}
+	collConfig.ReplaceOne(context.TODO(), query, listado)
+}
+
+func saveInDatabase(client *mongo.Client, data *map[string]map[string][]core.Asignatura) {
+
+	collFacultades := client.Database("asignaturas").Collection("asignaturas")
+	collCarreras := client.Database("asignaturas").Collection("carreras")
+
+	var wg sync.WaitGroup
+	var wg2 sync.WaitGroup
+
+	for facultad, carreras := range *data {
 
 		wg.Add(1)
 
@@ -179,9 +174,6 @@ func saveInDatabase(data *map[string]map[string][]core.Asignatura) {
 
 		}
 	}
-
-	query := bson.D{{Key: "_id", Value: "listado"}}
-	collConfig.ReplaceOne(context.TODO(), query, listado)
 
 	wg.Wait()
 	wg2.Wait()
