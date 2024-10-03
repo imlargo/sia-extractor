@@ -13,6 +13,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const pathToData string = "artifacts/"
+
 type DocumentCarrera struct {
 	ID          string            `json:"_id" bson:"_id"`
 	Facultad    string            `json:"facultad" bson:"facultad"`
@@ -58,7 +60,7 @@ func mergeAllData() map[string]map[string][]core.Asignatura {
 
 	for i := 0; i < totalGrupos; i++ {
 		// Cargar datos de asignaturas de carreras
-		path := "./" + strconv.Itoa(i+1) + ".json"
+		path := pathToData + strconv.Itoa(i+1) + ".json"
 		var data map[string][]core.Asignatura
 
 		// Leer datos de asignaturas
