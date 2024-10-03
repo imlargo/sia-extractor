@@ -59,6 +59,10 @@ func App() {
 		println("Grupo asignado: ", grupo)
 		initTime := time.Now()
 		data := core.ExtraerGrupo(grupo)
+		if data == nil {
+			println("Grupo no encontrado")
+			return
+		}
 		filename := strconv.Itoa(grupo) + ".json"
 		finalAsignaturasJSON, _ := json.Marshal(data)
 		os.WriteFile(filename, finalAsignaturasJSON, 0644)
