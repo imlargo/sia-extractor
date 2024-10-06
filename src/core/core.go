@@ -189,15 +189,7 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	asignaturas := extraerAsignaturas(codigo, page)
 
-	time.Sleep(3 * time.Second)
-	Sel(page.MustElement(Paths.Tipologia), Tipologia_Electiva)
-	loadElectivas(codigo, ConstructCodigoElectiva(codigo.Facultad, codigo.Carrera), page)
-
-	electivas := extraerAsignaturas(codigo, page)
-
-	data := append(asignaturas, electivas...)
-
-	return &data
+	return &asignaturas
 }
 
 func extraerAsignaturas(codigo Codigo, page *rod.Page) []Asignatura {
