@@ -88,6 +88,15 @@ func ConstructCodigo(facultad string, carrera string) Codigo {
 	}
 }
 
+func ConstructCodigoElectiva(facultad string, carrera string) PathElectiva {
+	return PathElectiva{
+		Por:         ValuesElectiva.Por,
+		SedePor:     ValuesElectiva.SedePor,
+		FacultadPor: facultad,
+		CarreraPor:  carrera,
+	}
+}
+
 func loadListadoGrupos() [][]map[string]string {
 	var listadoGrupos [][]map[string]string
 	bytesGrupos, _ := os.ReadFile(Path_Grupos)

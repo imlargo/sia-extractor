@@ -20,14 +20,14 @@ var Paths = Path{
 	Tipologia: "#pt1\\:r1\\:0\\:soc4\\:\\:content",
 }
 
-var PathsElectiva = PathTipologia{
+var PathsElectiva = PathElectiva{
 	Por:         "#pt1\\:r1\\:0\\:soc5\\:\\:content",
 	SedePor:     "#pt1\\:r1\\:0\\:soc10\\:\\:content",
 	FacultadPor: "#pt1\\:r1\\:0\\:soc6\\:\\:content",
 	CarreraPor:  "#pt1\\:r1\\:0\\:soc7\\:\\:content",
 }
 
-var ValuesElectiva = PathTipologia{
+var ValuesElectiva = PathElectiva{
 	Por:         "Por facultad y plan",
 	SedePor:     "1102 SEDE MEDELLÍN",
 	FacultadPor: "3 SEDE MEDELLÍN",

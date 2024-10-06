@@ -66,26 +66,26 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 	return page, browser
 }
 
-func loadElectivas(codigo Codigo, page *rod.Page) {
+func loadElectivas(codigo Codigo, codigoElectiva PathElectiva, page *rod.Page) {
 
 	// Porque tipo
 	time.Sleep(timeoutSelect)
-	SelectWithRecover(page, PathsElectiva.Por, ValuesElectiva.Por, Paths.Tipologia, codigo.Tipologia)
+	SelectWithRecover(page, PathsElectiva.Por, codigoElectiva.Por, Paths.Tipologia, codigo.Tipologia)
 	println("Tipo electiva seleccionada...", codigo.Carrera)
 
 	// POrque sede
 	time.Sleep(timeoutSelect)
-	SelectWithRecover(page, PathsElectiva.SedePor, ValuesElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
+	SelectWithRecover(page, PathsElectiva.SedePor, codigoElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
 	println("Sede electiva seleccionada...", codigo.Carrera)
 
 	// porque facultad
 	time.Sleep(timeoutSelect)
-	SelectWithRecover(page, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
+	SelectWithRecover(page, PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
 	println("Facultad electiva seleccionada...", codigo.Carrera)
 
 	// porque plan
 	time.Sleep(timeoutSelect)
-	SelectWithRecover(page, PathsElectiva.CarreraPor, ValuesElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
+	SelectWithRecover(page, PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
 	println("Carrera electiva seleccionada...", codigo.Carrera)
 }
 

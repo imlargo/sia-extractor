@@ -111,7 +111,7 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	page, _ := LoadPageCarrera(codigo)
-	loadElectivas(codigo, page)
+	loadElectivas(codigo, ConstructCodigoElectiva(codigo.Facultad, codigo.Carrera), page)
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
@@ -122,7 +122,7 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 
 	asignaturas := extraerAsignaturas(codigoCopy, page)
 
-	return asignaturas
+	return &asignaturas
 }
 
 func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
@@ -189,10 +189,18 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	asignaturas := extraerAsignaturas(codigo, page)
 
-	return asignaturas
+	time.Sleep(3 * time.Second)
+	Sel(page.MustElement(Paths.Tipologia), Tipologia_Electiva)
+	loadElectivas(codigo, ConstructCodigoElectiva(codigo.Facultad, codigo.Carrera), page)
+
+	electivas := extraerAsignaturas(codigo, page)
+
+	data := append(asignaturas, electivas...)
+
+	return &data
 }
 
-func extraerAsignaturas(codigo Codigo, page *rod.Page) *[]Asignatura {
+func extraerAsignaturas(codigo Codigo, page *rod.Page) []Asignatura {
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
@@ -226,7 +234,7 @@ func extraerAsignaturas(codigo Codigo, page *rod.Page) *[]Asignatura {
 
 	println("Finalizado...")
 
-	return &data
+	return data
 }
 
 func getTable(page *rod.Page) rod.Elements {
@@ -238,8 +246,13 @@ func getTable(page *rod.Page) rod.Elements {
 
 		table := page.MustElement(".af_table_data-table-VH-lines")
 		time.Sleep(3 * time.Second)
+
 		if table == nil {
 			continue
+		}
+
+		if !table.MustHas("tbody") {
+			break
 		}
 
 		tbody := table.MustElement("tbody")

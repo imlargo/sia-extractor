@@ -51,7 +51,7 @@ type Path struct {
 	Tipologia string
 }
 
-type PathTipologia struct {
+type PathElectiva struct {
 	Por         string
 	SedePor     string
 	FacultadPor string
