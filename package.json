@@ -1,0 +1,24 @@
+{
+	"name": "sia-extractor",
+	"version": "1.0.0",
+	"description": "Este repositorio contiene un conjunto de herramientas para extraer, procesar y desplegar datos del Sistema de Información Académica (SIA) de la Universidad Nacional de Colombia para alimentar los datos de mi aplicacion web de horarios **\"Pegaso\"**.",
+	"main": "index.js",
+	"devDependencies": {
+		"typescript": "^5.6.2"
+	},
+	"scripts": {
+		"build": "tsc",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/imlargo/sia-extractor.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/imlargo/sia-extractor/issues"
+	},
+	"homepage": "https://github.com/imlargo/sia-extractor#readme"
+}

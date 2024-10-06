@@ -9,7 +9,7 @@ const (
 	SizeGrupo          int    = 1
 	Path_Carreras      string = "data/carreras.json"
 	Path_Grupos        string = "data/grupos.json"
-	Path_JsExtractor   string = "src/getData.js"
+	Path_JsExtractor   string = "src/extractor/extractor.js"
 )
 
 var Paths = Path{
