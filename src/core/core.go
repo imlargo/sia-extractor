@@ -111,7 +111,7 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 	jSExtractorFunctionContent = LoadJSExtractor()
 
 	page, _ := LoadPageCarrera(codigo)
-	loadElectivas(codigo, ConstructCodigoElectiva(codigo.Facultad, codigo.Carrera), page)
+	loadElectivas(codigo, ConstructCodigoElectiva(ValuesElectiva.FacultadPor, ValuesElectiva.CarreraPor), page)
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
