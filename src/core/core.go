@@ -224,9 +224,16 @@ func extraerAsignaturas(codigo Codigo, page *rod.Page) []Asignatura {
 		page.MustElement(".af_showDetailHeader_content0")
 
 		// Extraer datos
-		rawData := page.MustEval(jSExtractorFunctionContent)
-		data[i] = parseAsignatura(&rawData, &codigo)
-		println(i, "/", size, data[i].Nombre)
+
+		err := rod.Try(func() {
+			rawData := page.MustEval(jSExtractorFunctionContent)
+			data[i] = parseAsignatura(&rawData, &codigo)
+			println(i, "/", size, data[i].Nombre)
+		})
+
+		if err != nil {
+			println("->>> Error al extraer datos: ", codigo.Carrera, " - ", i)
+		}
 
 		// Regresar
 		page.MustElement(".af_button").MustClick()
