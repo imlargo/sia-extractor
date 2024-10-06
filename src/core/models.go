@@ -50,3 +50,10 @@ type Path struct {
 	Carrera   string
 	Tipologia string
 }
+
+type PathTipologia struct {
+	Por         string
+	SedePor     string
+	FacultadPor string
+	CarreraPor  string
+}

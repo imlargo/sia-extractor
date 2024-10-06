@@ -102,96 +102,27 @@ func GenerarGruposCarreras() {
 
 }
 
-func ExtraerElectivas() []Asignatura {
-	println("Holi")
+func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 
-	var codigo Codigo = Codigo{
-		Nivel:     ValueNivel,
-		Sede:      ValueSede,
-		Facultad:  "3067 FACULTAD DE CIENCIAS HUMANAS  Y ECONÓMICAS",
-		Carrera:   "3512 CIENCIA POLÍTICA",
-		Tipologia: "LIBRE ELECCIÓN",
-	}
+	codigo.Facultad = "3068 FACULTAD DE MINAS"
+	codigo.Carrera = "3520 INGENIERÍA DE SISTEMAS E INFORMÁTICA"
+	codigo.Tipologia = Tipologia_Electiva
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
-	println("Cargado. ok")
+	page, _ := LoadPageCarrera(codigo)
+	loadElectivas(codigo, page)
+	defer page.MustClose()
 
-	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
-	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(codigo.Sede)
-	page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(codigo.Facultad)
-	page.MustWaitStable().MustElement(Paths.Carrera).MustClick().MustSelect(codigo.Carrera)
-	time.Sleep(2 * time.Second)
+	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
-	err := page.MustElement(Paths.Tipologia).MustClick().Select([]string{`^LIBRE ELECCIÓN$`}, true, rod.SelectorTypeRegex)
-	if err != nil {
-		println("Error: ", err)
-	}
+	codigoCopy := codigo
+	codigoCopy.Facultad = ValuesElectiva.FacultadPor
+	codigoCopy.Carrera = ValuesElectiva.CarreraPor
 
-	println("screen tomado")
+	asignaturas := extraerAsignaturas(codigoCopy, page)
 
-	// Porque tipo
-	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc5\\:\\:content").MustClick().MustSelect("Por facultad y plan")
-
-	println("Tipo seleccionado")
-
-	// POrque sede
-	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc10\\:\\:content").MustClick().MustSelect("1102 SEDE MEDELLÍN")
-	println("Sede seleccionada")
-
-	// porque facultad
-	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc6\\:\\:content").MustClick().MustSelect("3 SEDE MEDELLÍN")
-	println("Facultad seleccionada")
-
-	// porque plan
-	page.MustWaitStable().MustElement("#pt1\\:r1\\:0\\:soc7\\:\\:content").MustClick().MustSelect("3CLE COMPONENTE DE LIBRE ELECCIÓN")
-	println("Plan seleccionado")
-
-	// select all checkboxes
-	checkboxesDias := page.MustElements(".af_selectBooleanCheckbox_native-input")
-	for _, checkbox := range checkboxesDias {
-		checkbox.MustClick()
-	}
-
-	println("Campos seleccionados...ejecutando búsqueda")
-
-	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustElement(".af_button_link").MustClick()
-
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
-
-	size := len(page.MustWaitStable().MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr"))
-
-	println("Asignaturas encontradas: ", size)
-
-	var dataAsignaturas []Asignatura = make([]Asignatura, size)
-	// Recorrer asignaturas
-	for i := 0; i < size; i++ {
-
-		asignaturas := page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
-
-		// Cargar asignatura
-		asignatura := asignaturas[i]
-
-		link := asignatura.MustElement(".af_commandLink")
-		link.MustClick()
-
-		page.MustElement(".af_showDetailHeader_content0")
-
-		// Extraer datos
-		rawData := page.MustEval(jSExtractorFunctionContent)
-		dataAsignaturas[i] = parseAsignatura(&rawData, &codigo)
-
-		println("Asignatura: ", dataAsignaturas[i].Codigo, dataAsignaturas[i].Nombre)
-
-		// Regresar
-		backButton := page.MustElement(".af_button")
-		backButton.MustClick()
-	}
-
-	return dataAsignaturas
+	return asignaturas
 }
 
 func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
@@ -256,6 +187,13 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
+	asignaturas := extraerAsignaturas(codigo, page)
+
+	return asignaturas
+}
+
+func extraerAsignaturas(codigo Codigo, page *rod.Page) *[]Asignatura {
+
 	// Hacer clic en el botón para ejecutar la búsqueda
 	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
 	page.MustElement(".af_button_link").MustClick()
@@ -296,8 +234,10 @@ func getTable(page *rod.Page) rod.Elements {
 	var rows rod.Elements
 
 	for {
+		println("Buscando tabla...")
+
 		table := page.MustElement(".af_table_data-table-VH-lines")
-		time.Sleep(5 * time.Second)
+		time.Sleep(3 * time.Second)
 		if table == nil {
 			continue
 		}
@@ -308,7 +248,7 @@ func getTable(page *rod.Page) rod.Elements {
 		}
 
 		rows = tbody.MustElements("tr")
-		if rows == nil || len(rows) > 100 {
+		if rows == nil || len(rows) > 200 {
 			continue
 		}
 

@@ -1,11 +1,14 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
 )
+
+const timeoutSelect = 3 * time.Second
 
 func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
@@ -23,19 +26,19 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
 			println("Nivel seleccionado...", codigo.Carrera)
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(timeoutSelect)
 			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(timeoutSelect)
 			SelectWithRecover(page, Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
 			println("Facultad seleccionada...", codigo.Carrera)
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(timeoutSelect)
 			SelectWithRecover(page, Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
 			println("Carrera seleccionada...", codigo.Carrera)
 
-			time.Sleep(5 * time.Second)
+			time.Sleep(timeoutSelect)
 			SelectWithRecover(page, Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
 			println("Tipologia seleccionada...", codigo.Carrera)
 		})
@@ -61,6 +64,29 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 	}
 
 	return page, browser
+}
+
+func loadElectivas(codigo Codigo, page *rod.Page) {
+
+	// Porque tipo
+	time.Sleep(timeoutSelect)
+	SelectWithRecover(page, PathsElectiva.Por, ValuesElectiva.Por, Paths.Tipologia, codigo.Tipologia)
+	println("Tipo electiva seleccionada...", codigo.Carrera)
+
+	// POrque sede
+	time.Sleep(timeoutSelect)
+	SelectWithRecover(page, PathsElectiva.SedePor, ValuesElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
+	println("Sede electiva seleccionada...", codigo.Carrera)
+
+	// porque facultad
+	time.Sleep(timeoutSelect)
+	SelectWithRecover(page, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
+	println("Facultad electiva seleccionada...", codigo.Carrera)
+
+	// porque plan
+	time.Sleep(timeoutSelect)
+	SelectWithRecover(page, PathsElectiva.CarreraPor, ValuesElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
+	println("Carrera electiva seleccionada...", codigo.Carrera)
 }
 
 func getPage(browser *rod.Browser) *rod.Page {
@@ -105,7 +131,7 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 		if len(options) != 0 {
 			// println("Selecting value")
 			selectEl.MustClick()
-			selectEl.MustSelect(value)
+			Sel(selectEl, value)
 			// println("Clicked")
 			break
 		}
@@ -115,8 +141,14 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 			// println("### Pooling again ###", value)
 			el2 := page.MustElement(prevPath)
 			el2.MustClick()
-			el2.MustSelect(prevValue)
-			time.Sleep(5 * time.Second)
+			Sel(el2, prevValue)
+			time.Sleep(timeoutSelect)
 		}
 	}
+}
+
+func Sel(el *rod.Element, value string) error {
+	regex := fmt.Sprintf("^%s$", value)
+	err := el.Select([]string{regex}, true, rod.SelectorTypeRegex)
+	return err
 }

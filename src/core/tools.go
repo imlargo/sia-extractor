@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"os"
 
 	"github.com/ysmood/gson"
@@ -75,4 +76,38 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 		Prerequisitos:    prerequisitos,
 		Grupos:           grupos,
 	}
+}
+
+func ConstructCodigo(facultad string, carrera string) Codigo {
+	return Codigo{
+		Nivel:     ValueNivel,
+		Sede:      ValueSede,
+		Facultad:  facultad,
+		Carrera:   carrera,
+		Tipologia: Tipologia_All,
+	}
+}
+
+func loadListadoGrupos() [][]map[string]string {
+	var listadoGrupos [][]map[string]string
+	bytesGrupos, _ := os.ReadFile(Path_Grupos)
+	json.Unmarshal(bytesGrupos, &listadoGrupos)
+
+	return listadoGrupos
+}
+
+func GetCodigoFromGrupo(indexGrupo int) *Codigo {
+
+	listadoGrupos := loadListadoGrupos()
+
+	if indexGrupo > len(listadoGrupos) {
+		println("El grupo seleccionado no existe")
+		return nil
+	}
+
+	carrera := listadoGrupos[indexGrupo-1]
+
+	codigo := ConstructCodigo(carrera[0]["facultad"], carrera[0]["carrera"])
+
+	return &codigo
 }
