@@ -3,7 +3,7 @@ name: extract-all
 on:
   # Diariamente
   schedule:
-  - cron: "30 9 * * *"
+  - cron: "0 10,16,22 * * *"
 
   workflow_dispatch:
 
