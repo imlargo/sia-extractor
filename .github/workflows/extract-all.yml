@@ -8,14 +8,14 @@ on:
   workflow_dispatch:
 
 env:
-  CANTIDAD: 4
+  CANTIDAD: 5
 
 jobs:
   extract:
     strategy:
       fail-fast: false
       matrix:
-        grupo: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        grupo: [1, 2, 3, 4, 5, 6, 7, 8]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
