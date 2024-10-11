@@ -11,6 +11,7 @@ type Horario struct {
 	Inicio string `json:"inicio"`
 	Fin    string `json:"fin"`
 	Dia    string `json:"dia"`
+	Lugar  string `json:"lugar"`
 }
 
 type Grupo struct {
