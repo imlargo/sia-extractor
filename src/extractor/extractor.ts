@@ -173,10 +173,13 @@ import type { Prerequisito, Asignatura, Horario, Grupo, PrerequisitoAsignatura }
                 const informacionHorario = elementoHorario.children[0]?.textContent?.split(" ") ?? [];
                 if (informacionHorario.length < 4) continue;
 
+                const informacionLugar = Array.from(elementoHorario.children[1]?.children ?? []).map(child => child.textContent?.trim() ?? '');
+
                 const itemHorario = {
                     dia: informacionHorario[0],
                     inicio: informacionHorario[2],
                     fin: informacionHorario[4].replace(".", ""),
+                    lugar: informacionLugar.join(" "),
                 };
 
                 horarios.push(itemHorario);

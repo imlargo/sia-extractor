@@ -28,6 +28,7 @@ func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 				Inicio: rawHorario.Get("inicio").Str(),
 				Fin:    rawHorario.Get("fin").Str(),
 				Dia:    rawHorario.Get("dia").Str(),
+				Lugar:  rawHorario.Get("lugar").Str(),
 			}
 		}
 
