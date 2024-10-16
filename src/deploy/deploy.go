@@ -84,6 +84,11 @@ func mergeAllData() map[string]map[string][]core.Asignatura {
 		dataFacultad := make(map[string][]core.Asignatura)
 		for _, carrera := range carreras {
 			var valueCarrera string = carrera["carrera"]
+
+			if len(dataAsignaturas[valueCarrera]) == 0 {
+				panic("No se encontraron datos para la carrera: " + valueCarrera)
+			}
+
 			dataFacultad[valueCarrera] = dataAsignaturas[valueCarrera]
 		}
 
