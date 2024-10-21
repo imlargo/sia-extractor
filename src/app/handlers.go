@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"sia-extractor/src/core"
 	"sia-extractor/src/deploy"
+	"sia-extractor/src/extractor"
 	"sia-extractor/src/utils"
 	"strconv"
 	"time"
@@ -12,19 +13,19 @@ import (
 func handlePaths(args []string) {
 	fmt.Println("Creando paths")
 
-	extractor := core.NewExtractor()
+	extractor := extractor.NewExtractor()
 	extractor.CreatePathsCarreras()
 }
 
 func handleGroup(args []string) {
 	fmt.Println("Agrupando carreras")
-	extractor := core.NewExtractor()
+	extractor := extractor.NewExtractor()
 	extractor.GenerarGruposCarreras()
 }
 
 func handleElectivas(args []string) {
 	fmt.Println("Electivas")
-	extractor := core.NewExtractor()
+	extractor := extractor.NewExtractor()
 	electivas := extractor.ExtraerElectivas(core.ConstructCodigo("3068 FACULTAD DE MINAS", "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"))
 	if err := utils.SaveJsonToFile(electivas, "electivas.json"); err != nil {
 		fmt.Println("Error al guardar archivo: ", err)
@@ -53,7 +54,7 @@ func handleTest(args []string) {
 	}
 
 	carrera := listadoGrupos[grupo-1][0]
-	extractor := core.NewExtractor()
+	extractor := extractor.NewExtractor()
 	extractor.GetAsignaturasCarrera(core.ConstructCodigo(carrera["facultad"], carrera["carrera"]))
 	fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 }
@@ -89,7 +90,7 @@ func ExtractCarrera(indexGrupo int) map[string]*[]core.Asignatura {
 	var data *[]core.Asignatura
 	fmt.Println("Iniciando: ", codigo.Carrera)
 
-	extractor := core.NewExtractor()
+	extractor := extractor.NewExtractor()
 
 	if codigo.Facultad == core.ValuesElectiva.FacultadPor {
 		data = extractor.ExtraerElectivas(*codigo)

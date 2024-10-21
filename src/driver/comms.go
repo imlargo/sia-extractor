@@ -1,7 +1,8 @@
-package core
+package driver
 
 import (
 	"fmt"
+	"sia-extractor/src/core"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -42,12 +43,12 @@ func (driver *Driver) SelectWithRecover(path, value, prevPath, prevValue string)
 	}
 }
 
-func (driver *Driver) selectOptions(codigo Codigo) {
-	driver.selectWithSleep(Paths.Nivel, codigo.Nivel, "", "")
-	driver.selectWithSleep(Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
-	driver.selectWithSleep(Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
-	driver.selectWithSleep(Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
-	driver.selectWithSleep(Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
+func (driver *Driver) selectOptions(codigo core.Codigo) {
+	driver.selectWithSleep(core.Paths.Nivel, codigo.Nivel, "", "")
+	driver.selectWithSleep(core.Paths.Sede, codigo.Sede, core.Paths.Nivel, codigo.Nivel)
+	driver.selectWithSleep(core.Paths.Facultad, codigo.Facultad, core.Paths.Sede, codigo.Sede)
+	driver.selectWithSleep(core.Paths.Carrera, codigo.Carrera, core.Paths.Facultad, codigo.Facultad)
+	driver.selectWithSleep(core.Paths.Tipologia, codigo.Tipologia, core.Paths.Carrera, codigo.Carrera)
 }
 
 func (driver *Driver) GetTable() rod.Elements {

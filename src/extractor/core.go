@@ -1,8 +1,11 @@
-package core
+package extractor
 
 import (
 	"fmt"
 	"math"
+	"os"
+	"sia-extractor/src/core"
+	"sia-extractor/src/driver"
 	"sia-extractor/src/utils"
 	"time"
 
@@ -10,21 +13,22 @@ import (
 )
 
 type Extractor struct {
-	Driver          *Driver
+	Driver          *driver.Driver
 	JsExtractorFunc string
 }
 
 func NewExtractor() *Extractor {
 	return &Extractor{
-		Driver: NewDriver(),
+		Driver: driver.NewDriver(),
 	}
 }
 
 func (extractor *Extractor) LoadJSFunc() {
-	extractor.JsExtractorFunc = LoadJSExtractorFunc()
+	content, _ := os.ReadFile(core.Path_JsExtractor)
+	extractor.JsExtractorFunc = string(content)
 }
 
-func (extractor *Extractor) ExtraerAsignaturas(codigo Codigo) []Asignatura {
+func (extractor *Extractor) ExtraerAsignaturas(codigo core.Codigo) []core.Asignatura {
 
 	// Hacer clic en el botón para ejecutar la búsqueda
 	extractor.Driver.Page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
@@ -35,7 +39,7 @@ func (extractor *Extractor) ExtraerAsignaturas(codigo Codigo) []Asignatura {
 	size := len(asignaturas)
 	println("Asignaturas encontradas: ", size)
 
-	data := make([]Asignatura, size)
+	data := make([]core.Asignatura, size)
 
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
@@ -50,7 +54,7 @@ func (extractor *Extractor) ExtraerAsignaturas(codigo Codigo) []Asignatura {
 		// Extraer datos
 
 		rawData := extractor.Driver.Page.MustEval(extractor.JsExtractorFunc)
-		data[i] = parseAsignatura(&rawData, &codigo)
+		data[i] = core.ParseAsignatura(&rawData, &codigo)
 		println(i, "/", size, data[i].Nombre)
 
 		// Regresar
@@ -66,15 +70,15 @@ func (extractor *Extractor) CreatePathsCarreras() {
 
 	startTime := time.Now()
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().MustPage(SIA_URL)
+	page := rod.New().MustConnect().MustIncognito().MustPage(core.SIA_URL)
 	println("Cargado. ok")
 	println("")
 
-	page.MustWaitStable().MustElement(Paths.Nivel).MustClick().MustSelect(ValueNivel)
-	page.MustWaitStable().MustElement(Paths.Sede).MustClick().MustSelect(ValueSede)
+	page.MustWaitStable().MustElement(core.Paths.Nivel).MustClick().MustSelect(core.ValueNivel)
+	page.MustWaitStable().MustElement(core.Paths.Sede).MustClick().MustSelect(core.ValueSede)
 	println("Datos iniciales seleccionados")
 
-	selectFacultad := page.MustWaitStable().MustElement(Paths.Facultad)
+	selectFacultad := page.MustWaitStable().MustElement(core.Paths.Facultad)
 	listadoFacultades := selectFacultad.MustElements("option")
 
 	var listadoCarrerasSede []map[string]string
@@ -87,9 +91,9 @@ func (extractor *Extractor) CreatePathsCarreras() {
 
 		println("Seleccionando: ", facultad.MustText())
 
-		page.MustWaitStable().MustElement(Paths.Facultad).MustClick().MustSelect(facultad.MustText())
+		page.MustWaitStable().MustElement(core.Paths.Facultad).MustClick().MustSelect(facultad.MustText())
 
-		selectCarrera := page.MustWaitStable().MustElement(Paths.Carrera)
+		selectCarrera := page.MustWaitStable().MustElement(core.Paths.Carrera)
 		listadoCarreras := selectCarrera.MustElements("option")
 
 		var carreras []map[string]string = make([]map[string]string, len(listadoCarreras)-1)
@@ -127,9 +131,9 @@ func (extractor *Extractor) CreatePathsCarreras() {
 
 func (extractor *Extractor) GenerarGruposCarreras() {
 	var listadoCarreras []map[string]string
-	utils.LoadJsonFromFile(&listadoCarreras, Path_Carreras)
+	utils.LoadJsonFromFile(&listadoCarreras, core.Path_Carreras)
 
-	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(SizeGrupo)))
+	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(core.SizeGrupo)))
 
 	println("Cantidad de stacks: ", (stacks))
 
@@ -137,9 +141,9 @@ func (extractor *Extractor) GenerarGruposCarreras() {
 	for i := 0; i < stacks; i++ {
 		var grupo []map[string]string
 
-		for j := 0; j < SizeGrupo; j++ {
-			if (i*SizeGrupo)+j < len(listadoCarreras) {
-				grupo = append(grupo, listadoCarreras[(i*SizeGrupo)+j])
+		for j := 0; j < core.SizeGrupo; j++ {
+			if (i*core.SizeGrupo)+j < len(listadoCarreras) {
+				grupo = append(grupo, listadoCarreras[(i*core.SizeGrupo)+j])
 			}
 		}
 
@@ -153,25 +157,25 @@ func (extractor *Extractor) GenerarGruposCarreras() {
 
 }
 
-func (extractor *Extractor) ExtraerElectivas(codigo Codigo) *[]Asignatura {
+func (extractor *Extractor) ExtraerElectivas(codigo core.Codigo) *[]core.Asignatura {
 
 	codigo.Facultad = "3068 FACULTAD DE MINAS"
 	codigo.Carrera = "3520 INGENIERÍA DE SISTEMAS E INFORMÁTICA"
-	codigo.Tipologia = Tipologia_Electiva
+	codigo.Tipologia = core.Tipologia_Electiva
 
 	extractor.LoadJSFunc()
 
-	driver := NewDriver()
-	page := driver.LoadPageCarrera(codigo)
+	d := driver.NewDriver()
+	page := d.LoadPageCarrera(codigo)
 
-	driver.SelectElectivas(codigo, ConstructCodigoElectiva(ValuesElectiva.FacultadPor, ValuesElectiva.CarreraPor))
+	d.SelectElectivas(codigo, core.ConstructCodigoElectiva(core.ValuesElectiva.FacultadPor, core.ValuesElectiva.CarreraPor))
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
 	codigoCopy := codigo
-	codigoCopy.Facultad = ValuesElectiva.FacultadPor
-	codigoCopy.Carrera = ValuesElectiva.CarreraPor
+	codigoCopy.Facultad = core.ValuesElectiva.FacultadPor
+	codigoCopy.Carrera = core.ValuesElectiva.CarreraPor
 
 	asignaturas := extractor.ExtraerAsignaturas(codigoCopy)
 
@@ -179,7 +183,7 @@ func (extractor *Extractor) ExtraerElectivas(codigo Codigo) *[]Asignatura {
 }
 
 /*
-func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
+func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]core.Asignatura {
 
 	var listadoGrupos [][]map[string]string
 	utils.LoadJsonFromFile(&listadoGrupos, Path_Grupos)
@@ -191,7 +195,7 @@ func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]Asignatur
 
 	grupo := listadoGrupos[indexGrupo-1]
 
-	chanAsignaturas := make(chan *[]Asignatura, len(grupo))
+	chanAsignaturas := make(chan *[]core.Asignatura, len(grupo))
 
 	var wg sync.WaitGroup
 	for _, carrera := range grupo {
@@ -223,7 +227,7 @@ func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]Asignatur
 		close(chanAsignaturas)
 	}()
 
-	data := make(map[string]*[]Asignatura)
+	data := make(map[string]*[]core.Asignatura)
 	for asignaturas := range chanAsignaturas {
 		carrera := (*asignaturas)[0].Carrera
 		data[carrera] = asignaturas
@@ -233,12 +237,12 @@ func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]Asignatur
 }
 */
 
-func (extractor *Extractor) GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
+func (extractor *Extractor) GetAsignaturasCarrera(codigo core.Codigo) *[]core.Asignatura {
 
 	extractor.LoadJSFunc()
 
-	driver := NewDriver()
-	page := driver.LoadPageCarrera(codigo)
+	d := driver.NewDriver()
+	page := d.LoadPageCarrera(codigo)
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)

@@ -1,6 +1,7 @@
-package core
+package driver
 
 import (
+	"sia-extractor/src/core"
 	"time"
 
 	"github.com/go-rod/rod"
@@ -32,12 +33,12 @@ func (driver *Driver) getPage() *rod.Page {
 	router := InterceptRequests(page)
 	go router.Run()
 
-	page.Timeout(timeoutPage).MustNavigate(SIA_URL).MustWaitStable().CancelTimeout()
+	page.Timeout(timeoutPage).MustNavigate(core.SIA_URL).MustWaitStable().CancelTimeout()
 
 	return page
 }
 
-func (driver *Driver) loadPageWithRetry(codigo Codigo) *rod.Page {
+func (driver *Driver) loadPageWithRetry(codigo core.Codigo) *rod.Page {
 	var page *rod.Page
 	for attempts := 0; attempts <= maxRetries; attempts++ {
 		err := rod.Try(func() {
@@ -58,15 +59,15 @@ func (driver *Driver) loadPageWithRetry(codigo Codigo) *rod.Page {
 	return nil
 }
 
-func (driver *Driver) LoadPageCarrera(codigo Codigo) *rod.Page {
+func (driver *Driver) LoadPageCarrera(codigo core.Codigo) *rod.Page {
 	page := driver.loadPageWithRetry(codigo)
 	driver.selectAllCheckboxes()
 	return page
 }
 
-func (driver *Driver) SelectElectivas(codigo Codigo, codigoElectiva PathElectiva) {
-	driver.selectWithSleep(PathsElectiva.Por, codigoElectiva.Por, Paths.Tipologia, codigo.Tipologia)
-	driver.selectWithSleep(PathsElectiva.SedePor, codigoElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
-	driver.selectWithSleep(PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
-	driver.selectWithSleep(PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
+func (driver *Driver) SelectElectivas(codigo core.Codigo, codigoElectiva core.PathElectiva) {
+	driver.selectWithSleep(core.PathsElectiva.Por, codigoElectiva.Por, core.Paths.Tipologia, codigo.Tipologia)
+	driver.selectWithSleep(core.PathsElectiva.SedePor, codigoElectiva.SedePor, core.PathsElectiva.Por, core.ValuesElectiva.Por)
+	driver.selectWithSleep(core.PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, core.PathsElectiva.SedePor, core.ValuesElectiva.SedePor)
+	driver.selectWithSleep(core.PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, core.PathsElectiva.FacultadPor, core.ValuesElectiva.FacultadPor)
 }
