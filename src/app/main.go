@@ -5,15 +5,6 @@ import (
 	"os"
 )
 
-const (
-	comPaths     string = "paths"
-	comGroup     string = "group"
-	comElectivas string = "electivas"
-	comDeploy    string = "deploy"
-	comTest      string = "test"
-	comExtract   string = "extract"
-)
-
 func Start() {
 
 	args := os.Args[1:]
@@ -25,12 +16,12 @@ func Start() {
 	comando := args[0]
 
 	app := CreateNewApp()
-	app.AddHandler(comPaths, handlePaths)
-	app.AddHandler(comGroup, handleGroup)
-	app.AddHandler(comElectivas, handleElectivas)
-	app.AddHandler(comDeploy, handleDeploy)
-	app.AddHandler(comTest, handleTest)
-	app.AddHandler(comExtract, handleExtract)
+	app.AddHandler("paths", handlePaths)
+	app.AddHandler("group", handleGroup)
+	app.AddHandler("electivas", handleElectivas)
+	app.AddHandler("deploy", handleDeploy)
+	app.AddHandler("test", handleTest)
+	app.AddHandler("extract", handleExtract)
 
 	app.Handle(comando, args)
 }

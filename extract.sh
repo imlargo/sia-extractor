@@ -8,5 +8,8 @@ cantidad=$2
 start=$(( (grupo - 1) * cantidad + 1 ))
 end=$(( grupo * cantidad ))
 
+# Exportar la variable de entorno MONGO_URI
+export MONGO_URI="${MONGO_URI}"
+
 # Ejecutar el comando parallel con el rango calculado
-parallel -j $cantidad --ungroup "go run . extract {1}" ::: $(seq $start $end)
+parallel -j $cantidad --ungroup --retries 3 "MONGO_URI=$MONGO_URI go run . extract {1}" ::: $(seq $start $end)

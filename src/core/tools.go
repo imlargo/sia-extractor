@@ -1,20 +1,12 @@
 package core
 
 import (
-	"os"
 	"sia-extractor/src/utils"
 
 	"github.com/ysmood/gson"
 )
 
-func LoadJSExtractor() string {
-	content, _ := os.ReadFile(Path_JsExtractor)
-	JSExtractorFunctionContent := string(content)
-
-	return JSExtractorFunctionContent
-}
-
-func parseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
+func ParseAsignatura(rawData *gson.JSON, codigo *Codigo) Asignatura {
 	rawGrupos := rawData.Get("grupos").Arr()
 	var grupos []Grupo = make([]Grupo, len(rawGrupos))
 
