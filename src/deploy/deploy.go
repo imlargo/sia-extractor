@@ -72,7 +72,7 @@ func mergeAllData() map[string]map[string][]core.Asignatura {
 	}
 
 	// Agrupar carreras por facultad
-	carrerasAgrupadas := groupBy(carreras, func(carrera map[string]string) string {
+	carrerasAgrupadas := utils.GroupBy(carreras, func(carrera map[string]string) string {
 		return carrera["facultad"]
 	})
 

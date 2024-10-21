@@ -33,3 +33,15 @@ func LoadJsonFromFile[T any](dest *T, path string) error {
 
 	return nil
 }
+
+func GroupBy[T any](array []map[string]T, function func(map[string]T) string) map[string][]map[string]T {
+
+	result := make(map[string][]map[string]T)
+
+	for _, item := range array {
+		key := function(item)
+		result[key] = append(result[key], item)
+	}
+
+	return result
+}

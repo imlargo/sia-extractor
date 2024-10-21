@@ -25,18 +25,6 @@ func getMongoDbClient() *mongo.Client {
 	return client
 }
 
-func groupBy[T any](array []map[string]T, function func(map[string]T) string) map[string][]map[string]T {
-
-	result := make(map[string][]map[string]T)
-
-	for _, item := range array {
-		key := function(item)
-		result[key] = append(result[key], item)
-	}
-
-	return result
-}
-
 func getTipologiasUnicas(asignaturas []core.Asignatura) []string {
 	tipologiasUnicas := make([]string, 0)
 
