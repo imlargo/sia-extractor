@@ -85,3 +85,15 @@ func (driver *Driver) GetTable() rod.Elements {
 	return rows
 
 }
+
+func (driver *Driver) getPage() *rod.Page {
+
+	page := driver.Browser.MustIncognito().MustPage("")
+
+	router := InterceptRequests(page)
+	go router.Run()
+
+	page.Timeout(timeoutPage).MustNavigate(core.SIA_URL).MustWaitStable().CancelTimeout()
+
+	return page
+}

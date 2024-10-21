@@ -26,16 +26,16 @@ func NewDriver() *Driver {
 	}
 }
 
-func (driver *Driver) getPage() *rod.Page {
+func (driver *Driver) LoadPageCarrera(codigo core.Codigo) {
+	driver.loadPageWithRetry(codigo)
+	driver.selectAllCheckboxes()
+}
 
-	page := driver.Browser.MustIncognito().MustPage("")
-
-	router := InterceptRequests(page)
-	go router.Run()
-
-	page.Timeout(timeoutPage).MustNavigate(core.SIA_URL).MustWaitStable().CancelTimeout()
-
-	return page
+func (driver *Driver) SelectElectivas(codigo core.Codigo, codigoElectiva core.PathElectiva) {
+	driver.selectWithSleep(core.PathsElectiva.Por, codigoElectiva.Por, core.Paths.Tipologia, codigo.Tipologia)
+	driver.selectWithSleep(core.PathsElectiva.SedePor, codigoElectiva.SedePor, core.PathsElectiva.Por, core.ValuesElectiva.Por)
+	driver.selectWithSleep(core.PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, core.PathsElectiva.SedePor, core.ValuesElectiva.SedePor)
+	driver.selectWithSleep(core.PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, core.PathsElectiva.FacultadPor, core.ValuesElectiva.FacultadPor)
 }
 
 func (driver *Driver) loadPageWithRetry(codigo core.Codigo) *rod.Page {
@@ -57,16 +57,4 @@ func (driver *Driver) loadPageWithRetry(codigo core.Codigo) *rod.Page {
 		page.MustClose()
 	}
 	return nil
-}
-
-func (driver *Driver) LoadPageCarrera(codigo core.Codigo) {
-	driver.loadPageWithRetry(codigo)
-	driver.selectAllCheckboxes()
-}
-
-func (driver *Driver) SelectElectivas(codigo core.Codigo, codigoElectiva core.PathElectiva) {
-	driver.selectWithSleep(core.PathsElectiva.Por, codigoElectiva.Por, core.Paths.Tipologia, codigo.Tipologia)
-	driver.selectWithSleep(core.PathsElectiva.SedePor, codigoElectiva.SedePor, core.PathsElectiva.Por, core.ValuesElectiva.Por)
-	driver.selectWithSleep(core.PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, core.PathsElectiva.SedePor, core.ValuesElectiva.SedePor)
-	driver.selectWithSleep(core.PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, core.PathsElectiva.FacultadPor, core.ValuesElectiva.FacultadPor)
 }
