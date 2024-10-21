@@ -15,7 +15,7 @@ const (
 const (
 	Path_Carreras    string = "data/carreras.json"
 	Path_Grupos      string = "data/grupos.json"
-	Path_JsExtractor string = "src/extractor/extractor.js"
+	Path_JsExtractor string = "src/parser/parser.js"
 )
 
 var Paths = Path{

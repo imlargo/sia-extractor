@@ -8,6 +8,6 @@
 		"skipLibCheck": true, /* Skip type checking all .d.ts files. */
 	},
 	"include": [
-		"src/extractor/extractor.ts"
+		"src/parser/parser.ts"
 	],
 }
