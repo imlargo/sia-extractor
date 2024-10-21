@@ -24,12 +24,25 @@ func handleGroup(args []string) {
 }
 
 func handleElectivas(args []string) {
-	fmt.Println("Electivas")
-	extractor := extractor.NewExtractor()
-	electivas := extractor.ExtraerElectivas(core.ConstructCodigo("3068 FACULTAD DE MINAS", "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"))
-	if err := utils.SaveJsonToFile(electivas, "electivas.json"); err != nil {
+	grupo := GetNumGrupo(args)
+	if grupo == -1 {
+		return
+	}
+
+	initTime := time.Now()
+	data := ExtractCarrera(grupo, true)
+
+	if data == nil {
+		fmt.Println("Grupo no encontrado")
+		return
+	}
+
+	filename := strconv.Itoa(grupo) + ".json"
+	if err := utils.SaveJsonToFile(data, filename); err != nil {
 		fmt.Println("Error al guardar archivo: ", err)
 	}
+	fmt.Println("......................................................")
+	fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 }
 
 func handleDeploy(args []string) {
@@ -65,8 +78,12 @@ func handleExtract(args []string) {
 		return
 	}
 
+	if grupo == 40 {
+		return
+	}
+
 	initTime := time.Now()
-	data := ExtractCarrera(grupo)
+	data := ExtractCarrera(grupo, false)
 
 	if data == nil {
 		fmt.Println("Grupo no encontrado")
@@ -81,7 +98,7 @@ func handleExtract(args []string) {
 	fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))
 }
 
-func ExtractCarrera(indexGrupo int) map[string]*[]core.Asignatura {
+func ExtractCarrera(indexGrupo int, electivas bool) map[string]*[]core.Asignatura {
 	codigo := core.GetCodigoFromGrupo(indexGrupo)
 	if codigo == nil {
 		return nil
@@ -92,7 +109,7 @@ func ExtractCarrera(indexGrupo int) map[string]*[]core.Asignatura {
 
 	extractor := extractor.NewExtractor()
 
-	if codigo.Facultad == core.ValuesElectiva.FacultadPor {
+	if electivas {
 		data = extractor.ExtraerElectivas(*codigo)
 	} else {
 		data = extractor.GetAsignaturasCarrera(*codigo)

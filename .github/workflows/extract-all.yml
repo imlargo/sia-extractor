@@ -42,11 +42,34 @@ jobs:
           retention-days: 1
       
           #path: $#{{ matrix.grupo }}.json
+          
+  electivas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+          cache-dependency-path: "go.sum"
+        
+      - name: build
+        run: go build
+        
+      - name: run
+        run: |
+          MONGO_URI="${{secrets.MONGO_URI}}" go run . electivas 40
+
+      - name: Subir artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.grupo }}
+          path: ./*.json
+          retention-days: 1
 
   merge-save:
-    needs: [extract]
+    needs: [extract, electivas]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
