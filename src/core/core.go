@@ -4,15 +4,65 @@ import (
 	"fmt"
 	"math"
 	"sia-extractor/src/utils"
-	"sync"
 	"time"
 
 	"github.com/go-rod/rod"
 )
 
-var jSExtractorFunctionContent string = ""
+type Extractor struct {
+	Driver          *Driver
+	JsExtractorFunc string
+}
 
-func CreatePathsCarreras() {
+func NewExtractor() *Extractor {
+	return &Extractor{
+		Driver: NewDriver(),
+	}
+}
+
+func (extractor *Extractor) LoadJSFunc() {
+	extractor.JsExtractorFunc = LoadJSExtractorFunc()
+}
+
+func (extractor *Extractor) ExtraerAsignaturas(codigo Codigo) []Asignatura {
+
+	// Hacer clic en el botón para ejecutar la búsqueda
+	extractor.Driver.Page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	extractor.Driver.Page.MustElement(".af_button_link").MustClick()
+	extractor.Driver.Page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+
+	asignaturas := extractor.Driver.GetTable()
+	size := len(asignaturas)
+	println("Asignaturas encontradas: ", size)
+
+	data := make([]Asignatura, size)
+
+	// Recorrer asignaturas
+	for i := 0; i < size; i++ {
+
+		asignaturas = extractor.Driver.Page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+
+		// Cargar link
+		asignaturas[i].MustElement(".af_commandLink").MustClick()
+
+		extractor.Driver.Page.MustElement(".af_showDetailHeader_content0")
+
+		// Extraer datos
+
+		rawData := extractor.Driver.Page.MustEval(extractor.JsExtractorFunc)
+		data[i] = parseAsignatura(&rawData, &codigo)
+		println(i, "/", size, data[i].Nombre)
+
+		// Regresar
+		extractor.Driver.Page.MustElement(".af_button").MustClick()
+	}
+
+	println("Finalizado...")
+
+	return data
+}
+
+func (extractor *Extractor) CreatePathsCarreras() {
 
 	startTime := time.Now()
 	println("Iniciando...")
@@ -75,7 +125,7 @@ func CreatePathsCarreras() {
 	println("Finalizado!!! :D")
 }
 
-func GenerarGruposCarreras() {
+func (extractor *Extractor) GenerarGruposCarreras() {
 	var listadoCarreras []map[string]string
 	utils.LoadJsonFromFile(&listadoCarreras, Path_Carreras)
 
@@ -103,13 +153,13 @@ func GenerarGruposCarreras() {
 
 }
 
-func ExtraerElectivas(codigo Codigo) *[]Asignatura {
+func (extractor *Extractor) ExtraerElectivas(codigo Codigo) *[]Asignatura {
 
 	codigo.Facultad = "3068 FACULTAD DE MINAS"
 	codigo.Carrera = "3520 INGENIERÍA DE SISTEMAS E INFORMÁTICA"
 	codigo.Tipologia = Tipologia_Electiva
 
-	jSExtractorFunctionContent = LoadJSExtractor()
+	extractor.LoadJSFunc()
 
 	driver := NewDriver()
 	page := driver.LoadPageCarrera(codigo)
@@ -123,12 +173,13 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 	codigoCopy.Facultad = ValuesElectiva.FacultadPor
 	codigoCopy.Carrera = ValuesElectiva.CarreraPor
 
-	asignaturas := extraerAsignaturas(codigoCopy, page)
+	asignaturas := extractor.ExtraerAsignaturas(codigoCopy)
 
 	return &asignaturas
 }
 
-func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
+/*
+func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 
 	var listadoGrupos [][]map[string]string
 	utils.LoadJsonFromFile(&listadoGrupos, Path_Grupos)
@@ -180,10 +231,11 @@ func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 
 	return data
 }
+*/
 
-func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
+func (extractor *Extractor) GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
-	jSExtractorFunctionContent = LoadJSExtractor()
+	extractor.LoadJSFunc()
 
 	driver := NewDriver()
 	page := driver.LoadPageCarrera(codigo)
@@ -191,80 +243,7 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
-	asignaturas := extraerAsignaturas(codigo, page)
+	asignaturas := extractor.ExtraerAsignaturas(codigo)
 
 	return &asignaturas
-}
-
-func extraerAsignaturas(codigo Codigo, page *rod.Page) []Asignatura {
-
-	// Hacer clic en el botón para ejecutar la búsqueda
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
-	page.MustElement(".af_button_link").MustClick()
-	page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
-
-	asignaturas := getTable(page)
-	size := len(asignaturas)
-	println("Asignaturas encontradas: ", size)
-
-	data := make([]Asignatura, size)
-
-	// Recorrer asignaturas
-	for i := 0; i < size; i++ {
-
-		asignaturas = page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
-
-		// Cargar link
-		asignaturas[i].MustElement(".af_commandLink").MustClick()
-
-		page.MustElement(".af_showDetailHeader_content0")
-
-		// Extraer datos
-
-		rawData := page.MustEval(jSExtractorFunctionContent)
-		data[i] = parseAsignatura(&rawData, &codigo)
-		println(i, "/", size, data[i].Nombre)
-
-		// Regresar
-		page.MustElement(".af_button").MustClick()
-	}
-
-	println("Finalizado...")
-
-	return data
-}
-
-func getTable(page *rod.Page) rod.Elements {
-
-	var rows rod.Elements
-
-	for {
-		println("Buscando tabla...")
-
-		table := page.MustElement(".af_table_data-table-VH-lines")
-		time.Sleep(3 * time.Second)
-
-		if table == nil {
-			continue
-		}
-
-		if !table.MustHas("tbody") {
-			break
-		}
-
-		tbody := table.MustElement("tbody")
-		if tbody == nil {
-			continue
-		}
-
-		rows = tbody.MustElements("tr")
-		if rows == nil || len(rows) > 200 {
-			continue
-		}
-
-		break
-	}
-
-	return rows
-
 }

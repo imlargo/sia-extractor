@@ -1,13 +1,16 @@
 package core
 
 import (
+	"fmt"
 	"os"
 	"sia-extractor/src/utils"
 
+	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/proto"
 	"github.com/ysmood/gson"
 )
 
-func LoadJSExtractor() string {
+func LoadJSExtractorFunc() string {
 	content, _ := os.ReadFile(Path_JsExtractor)
 	JSExtractorFunctionContent := string(content)
 
@@ -119,4 +122,28 @@ func GetCodigoFromGrupo(indexGrupo int) *Codigo {
 	codigo := ConstructCodigo(carrera[0]["facultad"], carrera[0]["carrera"])
 
 	return &codigo
+}
+
+func Sel(el *rod.Element, value string) error {
+	regex := fmt.Sprintf("^%s$", value)
+	return el.Select([]string{regex}, true, rod.SelectorTypeRegex)
+}
+
+func InterceptRequests(page *rod.Page) *rod.HijackRouter {
+	router := page.HijackRequests()
+
+	cancelReq := func(ctx *rod.Hijack) {
+		if ctx.Request.Type() == proto.NetworkResourceTypeImage {
+			ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
+			return
+		}
+		ctx.ContinueRequest(&proto.FetchContinueRequest{})
+	}
+
+	router.MustAdd("*.png", cancelReq)
+	router.MustAdd("*.svg", cancelReq)
+	router.MustAdd("*.gif", cancelReq)
+	router.MustAdd("*.css", cancelReq)
+
+	return router
 }

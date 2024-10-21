@@ -1,11 +1,9 @@
 package core
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/go-rod/rod"
-	"github.com/go-rod/rod/lib/proto"
 )
 
 const (
@@ -71,71 +69,4 @@ func (driver *Driver) SelectElectivas(codigo Codigo, codigoElectiva PathElectiva
 	driver.selectWithSleep(PathsElectiva.SedePor, codigoElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
 	driver.selectWithSleep(PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
 	driver.selectWithSleep(PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
-}
-
-func (driver *Driver) selectOptions(codigo Codigo) {
-	driver.selectWithSleep(Paths.Nivel, codigo.Nivel, "", "")
-	driver.selectWithSleep(Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
-	driver.selectWithSleep(Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
-	driver.selectWithSleep(Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
-	driver.selectWithSleep(Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
-}
-
-func (driver *Driver) selectWithSleep(path, value, prevPath, prevValue string) {
-	time.Sleep(sleepSelect)
-	driver.SelectWithRecover(path, value, prevPath, prevValue)
-	println(fmt.Sprintf("%s seleccionado...", value))
-}
-
-func (driver *Driver) selectAllCheckboxes() {
-	checkboxes := driver.Page.MustElements(".af_selectBooleanCheckbox_native-input")
-	for _, checkbox := range checkboxes {
-		checkbox.MustClick()
-	}
-}
-
-func (driver *Driver) SelectWithRecover(path, value, prevPath, prevValue string) {
-	for i := 0; i <= maxRetries; i++ {
-		selectEl := driver.Page.MustElement(path)
-		options := selectEl.MustElements("option")
-
-		if len(options) != 0 {
-			selectEl.MustClick()
-			Sel(selectEl, value)
-			return
-		}
-
-		if i == maxRetries {
-			panic("Error al cargar la pagina, timeout")
-		}
-
-		el2 := driver.Page.MustElement(prevPath)
-		el2.MustClick()
-		Sel(el2, prevValue)
-		time.Sleep(sleepSelect)
-	}
-}
-
-func Sel(el *rod.Element, value string) error {
-	regex := fmt.Sprintf("^%s$", value)
-	return el.Select([]string{regex}, true, rod.SelectorTypeRegex)
-}
-
-func InterceptRequests(page *rod.Page) *rod.HijackRouter {
-	router := page.HijackRequests()
-
-	cancelReq := func(ctx *rod.Hijack) {
-		if ctx.Request.Type() == proto.NetworkResourceTypeImage {
-			ctx.Response.Fail(proto.NetworkErrorReasonBlockedByClient)
-			return
-		}
-		ctx.ContinueRequest(&proto.FetchContinueRequest{})
-	}
-
-	router.MustAdd("*.png", cancelReq)
-	router.MustAdd("*.svg", cancelReq)
-	router.MustAdd("*.gif", cancelReq)
-	router.MustAdd("*.css", cancelReq)
-
-	return router
 }
