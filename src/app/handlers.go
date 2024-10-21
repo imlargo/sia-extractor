@@ -99,5 +99,11 @@ func ExtractCarrera(indexGrupo int) map[string]*[]core.Asignatura {
 	}
 	fmt.Println("Finalizado: ", codigo.Carrera)
 
+	dbClient := deploy.NewDatabaseClient()
+	fmt.Println("Connected to MongoDB!")
+	defer dbClient.Disconnect()
+
+	dbClient.SaveCarrera(deploy.CreateDocumentCarrera(codigo.Carrera, codigo.Facultad, *data))
+
 	return map[string]*[]core.Asignatura{codigo.Carrera: data}
 }
