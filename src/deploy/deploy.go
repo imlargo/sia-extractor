@@ -27,7 +27,7 @@ const (
 
 func DeployData() {
 
-	client := getMongoDbClient()
+	client := GetMongoDbClient()
 	fmt.Println("Connected to MongoDB!")
 
 	defer func() {
