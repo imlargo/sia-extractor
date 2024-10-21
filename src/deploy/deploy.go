@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
+	"sia-extractor/src/utils"
 	"strconv"
 	"sync"
 
@@ -38,9 +39,10 @@ func DeployData() {
 	}()
 
 	merged := mergeAllData()
-
-	bytesMerged, _ := json.Marshal(merged)
-	os.WriteFile("data.json", bytesMerged, 0644)
+	err := utils.SaveJsonToFile(merged, "data.json")
+	if err != nil {
+		fmt.Println("Error al guardar archivo: ", err)
+	}
 
 	updateListadoCarreras(client, &merged)
 	saveInDatabase(client, &merged)

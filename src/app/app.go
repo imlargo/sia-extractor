@@ -6,6 +6,7 @@ import (
 	"os"
 	"sia-extractor/src/core"
 	"sia-extractor/src/deploy"
+	"sia-extractor/src/utils"
 	"strconv"
 	"time"
 )
@@ -30,8 +31,11 @@ func App() {
 	case "electivas":
 		println("Electivas")
 		electivas := core.ExtraerElectivas(core.ConstructCodigo("3068 FACULTAD DE MINAS", "3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"))
-		electivasJSON, _ := json.Marshal(electivas)
-		os.WriteFile("electivas.json", electivasJSON, 0644)
+		err := utils.SaveJsonToFile(electivas, "electivas.json")
+		if err != nil {
+			fmt.Println("Error al guardar archivo: ", err)
+		}
+
 	case "deploy":
 		println("Consolidando datos")
 		deploy.DeployData()
@@ -60,8 +64,10 @@ func App() {
 		}
 
 		filename := strconv.Itoa(grupo) + ".json"
-		finalAsignaturasJSON, _ := json.Marshal(data)
-		os.WriteFile(filename, finalAsignaturasJSON, 0644)
+		err := utils.SaveJsonToFile(data, filename)
+		if err != nil {
+			fmt.Println("Error al guardar archivo: ", err)
+		}
 		println("")
 		println("......................................................")
 		fmt.Printf("Tiempo de ejecución final: %v\n", time.Since(initTime))

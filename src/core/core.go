@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sia-extractor/src/utils"
 	"sync"
 	"time"
 
@@ -68,8 +69,10 @@ func CreatePathsCarreras() {
 	println(".............................")
 	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
 
-	dataCarrerasJSON, _ := json.Marshal(listadoCarrerasSede)
-	os.WriteFile(Path_Carreras, dataCarrerasJSON, 0644)
+	err := utils.SaveJsonToFile(listadoCarrerasSede, "carreras.json")
+	if err != nil {
+		fmt.Println("Error al guardar archivo: ", err)
+	}
 
 	println("Finalizado!!! :D")
 }
@@ -97,8 +100,10 @@ func GenerarGruposCarreras() {
 		grupos = append(grupos, grupo)
 	}
 
-	dataGruposJSON, _ := json.Marshal(grupos)
-	os.WriteFile(Path_Grupos, dataGruposJSON, 0644)
+	err := utils.SaveJsonToFile(grupos, "grupos.json")
+	if err != nil {
+		fmt.Println("Error al guardar archivo: ", err)
+	}
 
 }
 
