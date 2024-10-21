@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"sia-extractor/src/core"
 	"sia-extractor/src/utils"
-	"strconv"
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -31,7 +30,7 @@ func DeployData() {
 
 	defer dbClient.Disconnect()
 
-	merged := mergeAllData()
+	merged := MergeDataSede()
 	err := utils.SaveJsonToFile(merged, "data.json")
 	if err != nil {
 		fmt.Println("Error al guardar archivo: ", err)
@@ -41,55 +40,6 @@ func DeployData() {
 	saveInDatabase(dbClient, &merged)
 	dbClient.updateFechaExtraccion(merged["3068 FACULTAD DE MINAS"]["3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"][0].FechaExtraccion)
 
-}
-
-func mergeAllData() map[string]map[string][]core.Asignatura {
-	// Cargar listado de carreras
-	var carreras []map[string]string
-	utils.LoadJsonFromFile(&carreras, core.Path_Carreras)
-
-	println("Cantidad de grupos: ", totalGrupos)
-
-	var dataAsignaturas = make(map[string][]core.Asignatura)
-
-	for i := 0; i < totalGrupos; i++ {
-		// Cargar datos de asignaturas de carreras
-		path := pathToData + strconv.Itoa(i+1) + ".json"
-		var data map[string][]core.Asignatura
-
-		// Leer datos de asignaturas
-		utils.LoadJsonFromFile(&data, path)
-
-		// Agregar asignaturas a consolidado
-		for carrera, asignaturas := range data {
-			dataAsignaturas[carrera] = asignaturas
-		}
-	}
-
-	// Agrupar carreras por facultad
-	carrerasAgrupadas := utils.GroupBy(carreras, func(carrera map[string]string) string {
-		return carrera["facultad"]
-	})
-
-	merged := make(map[string]map[string][]core.Asignatura)
-	for facultad, carreras := range carrerasAgrupadas {
-
-		dataFacultad := make(map[string][]core.Asignatura)
-		for _, carrera := range carreras {
-			var valueCarrera string = carrera["carrera"]
-
-			if len(dataAsignaturas[valueCarrera]) == 0 {
-				panic("No se encontraron datos para la carrera: " + valueCarrera)
-			}
-
-			dataFacultad[valueCarrera] = dataAsignaturas[valueCarrera]
-		}
-
-		merged[facultad] = dataFacultad
-
-	}
-
-	return merged
 }
 
 func saveInDatabase(dbClient *DatabaseClient, data *map[string]map[string][]core.Asignatura) {
