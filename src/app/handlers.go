@@ -34,16 +34,8 @@ func handleDeploy(args []string) {
 
 func handleTest(args []string) {
 
-	if len(args) < 2 {
-		fmt.Println("Debe ingresar el número de grupo")
-		return
-	}
-
-	grupoStr := args[1]
-
-	grupo, err := strconv.Atoi(grupoStr)
-	if err != nil {
-		fmt.Println("Error al convertir grupo: ", err)
+	grupo := GetNumGrupo(args)
+	if grupo == -1 {
 		return
 	}
 
@@ -62,16 +54,8 @@ func handleTest(args []string) {
 }
 
 func handleExtract(args []string) {
-	if len(args) < 2 {
-		fmt.Println("Debe ingresar el número de grupo")
-		return
-	}
-
-	grupoStr := args[1]
-
-	grupo, err := strconv.Atoi(grupoStr)
-	if err != nil {
-		fmt.Println("Error al convertir grupo: ", err)
+	grupo := GetNumGrupo(args)
+	if grupo == -1 {
 		return
 	}
 
