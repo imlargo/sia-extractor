@@ -18,3 +18,18 @@ func SaveJsonToFile[T any](data T, filename string) error {
 
 	return nil
 }
+
+func LoadJsonFromFile[T any](dest *T, path string) error {
+	bytes, err := os.ReadFile(path)
+
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(bytes, dest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

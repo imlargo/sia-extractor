@@ -1,8 +1,8 @@
 package core
 
 import (
-	"encoding/json"
 	"os"
+	"sia-extractor/src/utils"
 
 	"github.com/ysmood/gson"
 )
@@ -100,8 +100,7 @@ func ConstructCodigoElectiva(facultad string, carrera string) PathElectiva {
 
 func loadListadoGrupos() [][]map[string]string {
 	var listadoGrupos [][]map[string]string
-	bytesGrupos, _ := os.ReadFile(Path_Grupos)
-	json.Unmarshal(bytesGrupos, &listadoGrupos)
+	utils.LoadJsonFromFile(&listadoGrupos, Path_Grupos)
 
 	return listadoGrupos
 }

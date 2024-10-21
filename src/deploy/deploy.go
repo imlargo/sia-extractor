@@ -2,9 +2,7 @@ package deploy
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"os"
 	"sia-extractor/src/core"
 	"sia-extractor/src/utils"
 	"strconv"
@@ -53,8 +51,7 @@ func DeployData() {
 func mergeAllData() map[string]map[string][]core.Asignatura {
 	// Cargar listado de carreras
 	var carreras []map[string]string
-	bytes, _ := os.ReadFile(core.Path_Carreras)
-	json.Unmarshal(bytes, &carreras)
+	utils.LoadJsonFromFile(&carreras, core.Path_Carreras)
 
 	println("Cantidad de grupos: ", totalGrupos)
 
@@ -66,8 +63,7 @@ func mergeAllData() map[string]map[string][]core.Asignatura {
 		var data map[string][]core.Asignatura
 
 		// Leer datos de asignaturas
-		bytes, _ := os.ReadFile(path)
-		json.Unmarshal(bytes, &data)
+		utils.LoadJsonFromFile(&data, path)
 
 		// Agregar asignaturas a consolidado
 		for carrera, asignaturas := range data {

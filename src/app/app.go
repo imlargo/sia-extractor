@@ -1,7 +1,6 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"sia-extractor/src/core"
@@ -46,8 +45,8 @@ func App() {
 		println("Grupo asignado: ", grupo)
 
 		var listadoGrupos [][]map[string]string
-		bytesGrupos, _ := os.ReadFile(core.Path_Grupos)
-		json.Unmarshal(bytesGrupos, &listadoGrupos)
+		utils.LoadJsonFromFile(&listadoGrupos, core.Path_Grupos)
+
 		carrera := listadoGrupos[grupo-1][0]
 
 		core.GetAsignaturasCarrera(core.ConstructCodigo(carrera["facultad"], carrera["carrera"]))

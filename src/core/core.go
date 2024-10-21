@@ -1,10 +1,8 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
-	"os"
 	"sia-extractor/src/utils"
 	"sync"
 	"time"
@@ -79,9 +77,7 @@ func CreatePathsCarreras() {
 
 func GenerarGruposCarreras() {
 	var listadoCarreras []map[string]string
-
-	contentCarreras, _ := os.ReadFile(Path_Carreras)
-	json.Unmarshal(contentCarreras, &listadoCarreras)
+	utils.LoadJsonFromFile(&listadoCarreras, Path_Carreras)
 
 	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(SizeGrupo)))
 
@@ -133,8 +129,8 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 
 	var listadoGrupos [][]map[string]string
-	bytesGrupos, _ := os.ReadFile(Path_Grupos)
-	json.Unmarshal(bytesGrupos, &listadoGrupos)
+	utils.LoadJsonFromFile(&listadoGrupos, Path_Grupos)
+
 	if indexGrupo > len(listadoGrupos) {
 		println("El grupo seleccionado no existe")
 		return nil
