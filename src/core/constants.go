@@ -1,15 +1,21 @@
 package core
 
 const (
-	SIA_URL            string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
+	SIA_URL   string = "https://sia.unal.edu.co/Catalogo/facespublico/public/servicioPublico.jsf?taskflowId=task-flow-AC_CatalogoAsignaturas"
+	SizeGrupo int    = 1
+)
+
+const (
 	ValueNivel         string = "Pregrado"
 	ValueSede          string = "1102 SEDE MEDELLÍN"
 	Tipologia_All      string = "TODAS MENOS  LIBRE ELECCIÓN"
 	Tipologia_Electiva string = "LIBRE ELECCIÓN"
-	SizeGrupo          int    = 1
-	Path_Carreras      string = "data/carreras.json"
-	Path_Grupos        string = "data/grupos.json"
-	Path_JsExtractor   string = "src/extractor/extractor.js"
+)
+
+const (
+	Path_Carreras    string = "data/carreras.json"
+	Path_Grupos      string = "data/grupos.json"
+	Path_JsExtractor string = "src/extractor/extractor.js"
 )
 
 var Paths = Path{
