@@ -12,4 +12,4 @@ end=$(( grupo * cantidad ))
 export MONGO_URI="${MONGO_URI}"
 
 # Ejecutar el comando parallel con el rango calculado
-parallel -j $cantidad --ungroup "MONGO_URI=$MONGO_URI go run . extract {1}" ::: $(seq $start $end)
+parallel -j $cantidad --ungroup --retries 3 "MONGO_URI=$MONGO_URI go run . extract {1}" ::: $(seq $start $end)
