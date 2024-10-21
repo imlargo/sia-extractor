@@ -165,11 +165,9 @@ func (extractor *Extractor) ExtraerElectivas(codigo core.Codigo) *[]core.Asignat
 
 	extractor.LoadJSFunc()
 
-	d := driver.NewDriver()
-	page := d.LoadPageCarrera(codigo)
-
-	d.SelectElectivas(codigo, core.ConstructCodigoElectiva(core.ValuesElectiva.FacultadPor, core.ValuesElectiva.CarreraPor))
-	defer page.MustClose()
+	extractor.Driver.LoadPageCarrera(codigo)
+	extractor.Driver.SelectElectivas(codigo, core.ConstructCodigoElectiva(core.ValuesElectiva.FacultadPor, core.ValuesElectiva.CarreraPor))
+	defer extractor.Driver.Page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 
@@ -241,9 +239,8 @@ func (extractor *Extractor) GetAsignaturasCarrera(codigo core.Codigo) *[]core.As
 
 	extractor.LoadJSFunc()
 
-	d := driver.NewDriver()
-	page := d.LoadPageCarrera(codigo)
-	defer page.MustClose()
+	extractor.Driver.LoadPageCarrera(codigo)
+	defer extractor.Driver.Page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
 

@@ -59,10 +59,9 @@ func (driver *Driver) loadPageWithRetry(codigo core.Codigo) *rod.Page {
 	return nil
 }
 
-func (driver *Driver) LoadPageCarrera(codigo core.Codigo) *rod.Page {
-	page := driver.loadPageWithRetry(codigo)
+func (driver *Driver) LoadPageCarrera(codigo core.Codigo) {
+	driver.loadPageWithRetry(codigo)
 	driver.selectAllCheckboxes()
-	return page
 }
 
 func (driver *Driver) SelectElectivas(codigo core.Codigo, codigoElectiva core.PathElectiva) {
