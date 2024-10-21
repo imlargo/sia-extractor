@@ -8,7 +8,18 @@ import (
 	"github.com/go-rod/rod/lib/proto"
 )
 
-const timeoutSelect = 3 * time.Second
+type SelectStep struct {
+	Path      string
+	Value     string
+	PrevPath  string
+	PrevValue string
+	Mensaje   string
+}
+
+const (
+	sleepSelect = 3 * time.Second
+	timeoutPage = 15 * time.Second
+)
 
 func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 
@@ -26,19 +37,19 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 			page.MustElement(Paths.Nivel).MustClick().MustSelect(codigo.Nivel)
 			println("Nivel seleccionado...", codigo.Carrera)
 
-			time.Sleep(timeoutSelect)
+			time.Sleep(sleepSelect)
 			SelectWithRecover(page, Paths.Sede, codigo.Sede, Paths.Nivel, codigo.Nivel)
 			println("Sede seleccionada...", codigo.Carrera)
 
-			time.Sleep(timeoutSelect)
+			time.Sleep(sleepSelect)
 			SelectWithRecover(page, Paths.Facultad, codigo.Facultad, Paths.Sede, codigo.Sede)
 			println("Facultad seleccionada...", codigo.Carrera)
 
-			time.Sleep(timeoutSelect)
+			time.Sleep(sleepSelect)
 			SelectWithRecover(page, Paths.Carrera, codigo.Carrera, Paths.Facultad, codigo.Facultad)
 			println("Carrera seleccionada...", codigo.Carrera)
 
-			time.Sleep(timeoutSelect)
+			time.Sleep(sleepSelect)
 			SelectWithRecover(page, Paths.Tipologia, codigo.Tipologia, Paths.Carrera, codigo.Carrera)
 			println("Tipologia seleccionada...", codigo.Carrera)
 		})
@@ -69,22 +80,22 @@ func LoadPageCarrera(codigo Codigo) (*rod.Page, *rod.Browser) {
 func loadElectivas(codigo Codigo, codigoElectiva PathElectiva, page *rod.Page) {
 
 	// Porque tipo
-	time.Sleep(timeoutSelect)
+	time.Sleep(sleepSelect)
 	SelectWithRecover(page, PathsElectiva.Por, codigoElectiva.Por, Paths.Tipologia, codigo.Tipologia)
 	println("Tipo electiva seleccionada...", codigo.Carrera)
 
 	// POrque sede
-	time.Sleep(timeoutSelect)
+	time.Sleep(sleepSelect)
 	SelectWithRecover(page, PathsElectiva.SedePor, codigoElectiva.SedePor, PathsElectiva.Por, ValuesElectiva.Por)
 	println("Sede electiva seleccionada...", codigo.Carrera)
 
 	// porque facultad
-	time.Sleep(timeoutSelect)
+	time.Sleep(sleepSelect)
 	SelectWithRecover(page, PathsElectiva.FacultadPor, codigoElectiva.FacultadPor, PathsElectiva.SedePor, ValuesElectiva.SedePor)
 	println("Facultad electiva seleccionada...", codigo.Carrera)
 
 	// porque plan
-	time.Sleep(timeoutSelect)
+	time.Sleep(sleepSelect)
 	SelectWithRecover(page, PathsElectiva.CarreraPor, codigoElectiva.CarreraPor, PathsElectiva.FacultadPor, ValuesElectiva.FacultadPor)
 	println("Carrera electiva seleccionada...", codigo.Carrera)
 }
@@ -110,7 +121,7 @@ func getPage(browser *rod.Browser) *rod.Page {
 	// since we are only hijacking a specific page, even using the "*" won't affect much of the performance
 	go router.Run()
 
-	page.Timeout(15 * time.Second).MustNavigate(SIA_URL).MustWaitStable().CancelTimeout()
+	page.Timeout(timeoutPage).MustNavigate(SIA_URL).MustWaitStable().CancelTimeout()
 
 	return page
 }
@@ -142,7 +153,7 @@ func SelectWithRecover(page *rod.Page, path string, value string, prevPath strin
 			el2 := page.MustElement(prevPath)
 			el2.MustClick()
 			Sel(el2, prevValue)
-			time.Sleep(timeoutSelect)
+			time.Sleep(sleepSelect)
 		}
 	}
 }
