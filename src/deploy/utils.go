@@ -1,41 +1,11 @@
 package deploy
 
 import (
-	"context"
-	"os"
+	"fmt"
 	"sia-extractor/src/core"
+	"sia-extractor/src/utils"
 	"slices"
-
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
-
-func getMongoDbClient() *mongo.Client {
-	var uri string = os.Getenv("MONGO_URI")
-
-	if uri == "" {
-		panic("No se ha definido la variable de entorno MONGO_URI")
-	}
-
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
-	if err != nil {
-		panic(err)
-	}
-
-	return client
-}
-
-func groupBy[T any](array []map[string]T, function func(map[string]T) string) map[string][]map[string]T {
-
-	result := make(map[string][]map[string]T)
-
-	for _, item := range array {
-		key := function(item)
-		result[key] = append(result[key], item)
-	}
-
-	return result
-}
 
 func getTipologiasUnicas(asignaturas []core.Asignatura) []string {
 	tipologiasUnicas := make([]string, 0)
@@ -50,4 +20,60 @@ func getTipologiasUnicas(asignaturas []core.Asignatura) []string {
 	}
 
 	return tipologiasUnicas
+}
+
+func CreateDocumentCarrera(carrera string, facultad string, asignaturas []core.Asignatura) DocumentCarrera {
+	return DocumentCarrera{
+		ID:          carrera,
+		Facultad:    facultad,
+		Carrera:     carrera,
+		Asignaturas: asignaturas,
+	}
+}
+
+func MergeDataSede() map[string]map[string][]core.Asignatura {
+	// Cargar listado de carreras
+	var carreras []map[string]string
+	utils.LoadJsonFromFile(&carreras, core.Path_Carreras)
+
+	println("Cantidad de grupos: ", totalGrupos)
+
+	dataAsignaturas := make(map[string][]core.Asignatura)
+
+	for i := 0; i < totalGrupos; i++ {
+		// Cargar datos de asignaturas de carreras
+		path := fmt.Sprintf("%s%d.json", pathToData, i+1)
+
+		// Leer datos de asignaturas
+		var data map[string][]core.Asignatura
+		utils.LoadJsonFromFile(&data, path)
+
+		// Agregar asignaturas a consolidado
+		for carrera, asignaturas := range data {
+			dataAsignaturas[carrera] = asignaturas
+		}
+	}
+
+	// Agrupar carreras por facultad
+	carrerasAgrupadas := utils.GroupBy(carreras, func(carrera map[string]string) string {
+		return carrera["facultad"]
+	})
+
+	merged := make(map[string]map[string][]core.Asignatura)
+	for facultad, carreras := range carrerasAgrupadas {
+		dataFacultad := make(map[string][]core.Asignatura)
+		for _, carrera := range carreras {
+			valueCarrera := carrera["carrera"]
+
+			if len(dataAsignaturas[valueCarrera]) == 0 {
+				panic("No se encontraron datos para la carrera: " + valueCarrera)
+			}
+
+			dataFacultad[valueCarrera] = dataAsignaturas[valueCarrera]
+		}
+
+		merged[facultad] = dataFacultad
+	}
+
+	return merged
 }

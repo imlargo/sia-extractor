@@ -2,3 +2,5 @@ node_modules
 
 sia-extractor.exe
 .env
+
+*.json

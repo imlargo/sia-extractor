@@ -1,10 +1,9 @@
 package core
 
 import (
-	"encoding/json"
 	"fmt"
 	"math"
-	"os"
+	"sia-extractor/src/utils"
 	"sync"
 	"time"
 
@@ -68,17 +67,17 @@ func CreatePathsCarreras() {
 	println(".............................")
 	fmt.Printf("Tiempo de ejecución: %s\n", elapsedTime)
 
-	dataCarrerasJSON, _ := json.Marshal(listadoCarrerasSede)
-	os.WriteFile(Path_Carreras, dataCarrerasJSON, 0644)
+	err := utils.SaveJsonToFile(listadoCarrerasSede, "carreras.json")
+	if err != nil {
+		fmt.Println("Error al guardar archivo: ", err)
+	}
 
 	println("Finalizado!!! :D")
 }
 
 func GenerarGruposCarreras() {
 	var listadoCarreras []map[string]string
-
-	contentCarreras, _ := os.ReadFile(Path_Carreras)
-	json.Unmarshal(contentCarreras, &listadoCarreras)
+	utils.LoadJsonFromFile(&listadoCarreras, Path_Carreras)
 
 	stacks := int(math.Ceil(float64(len(listadoCarreras)) / float64(SizeGrupo)))
 
@@ -97,8 +96,10 @@ func GenerarGruposCarreras() {
 		grupos = append(grupos, grupo)
 	}
 
-	dataGruposJSON, _ := json.Marshal(grupos)
-	os.WriteFile(Path_Grupos, dataGruposJSON, 0644)
+	err := utils.SaveJsonToFile(grupos, "grupos.json")
+	if err != nil {
+		fmt.Println("Error al guardar archivo: ", err)
+	}
 
 }
 
@@ -128,8 +129,8 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 func ExtraerGrupo(indexGrupo int) map[string]*[]Asignatura {
 
 	var listadoGrupos [][]map[string]string
-	bytesGrupos, _ := os.ReadFile(Path_Grupos)
-	json.Unmarshal(bytesGrupos, &listadoGrupos)
+	utils.LoadJsonFromFile(&listadoGrupos, Path_Grupos)
+
 	if indexGrupo > len(listadoGrupos) {
 		println("El grupo seleccionado no existe")
 		return nil
