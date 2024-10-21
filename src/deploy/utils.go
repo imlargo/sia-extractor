@@ -66,7 +66,8 @@ func MergeDataSede() map[string]map[string][]core.Asignatura {
 			valueCarrera := carrera["carrera"]
 
 			if len(dataAsignaturas[valueCarrera]) == 0 {
-				panic("No se encontraron datos para la carrera: " + valueCarrera)
+				println("No se encontraron datos para la carrera: " + valueCarrera)
+				continue
 			}
 
 			dataFacultad[valueCarrera] = dataAsignaturas[valueCarrera]
