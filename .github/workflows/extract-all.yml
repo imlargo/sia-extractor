@@ -64,7 +64,7 @@ jobs:
       - name: Subir artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: artifact-${{ matrix.grupo }}
+          name: artifact-9
           path: ./*.json
           retention-days: 1
 
