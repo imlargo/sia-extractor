@@ -111,8 +111,10 @@ func ExtraerElectivas(codigo Codigo) *[]Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	page, _ := LoadPageCarrera(codigo)
-	loadElectivas(codigo, ConstructCodigoElectiva(ValuesElectiva.FacultadPor, ValuesElectiva.CarreraPor), page)
+	driver := NewDriver()
+	page := driver.LoadPageCarrera(codigo)
+
+	driver.SelectElectivas(codigo, ConstructCodigoElectiva(ValuesElectiva.FacultadPor, ValuesElectiva.CarreraPor))
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
@@ -183,7 +185,8 @@ func GetAsignaturasCarrera(codigo Codigo) *[]Asignatura {
 
 	jSExtractorFunctionContent = LoadJSExtractor()
 
-	page, _ := LoadPageCarrera(codigo)
+	driver := NewDriver()
+	page := driver.LoadPageCarrera(codigo)
 	defer page.MustClose()
 
 	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
