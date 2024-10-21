@@ -180,6 +180,20 @@ func (extractor *Extractor) ExtraerElectivas(codigo core.Codigo) *[]core.Asignat
 	return &asignaturas
 }
 
+func (extractor *Extractor) GetAsignaturasCarrera(codigo core.Codigo) *[]core.Asignatura {
+
+	extractor.LoadJSFunc()
+
+	extractor.Driver.LoadPageCarrera(codigo)
+	defer extractor.Driver.Page.MustClose()
+
+	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
+
+	asignaturas := extractor.ExtraerAsignaturas(codigo)
+
+	return &asignaturas
+}
+
 /*
 func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]core.Asignatura {
 
@@ -234,17 +248,3 @@ func (extractor *Extractor) ExtraerGrupo(indexGrupo int) map[string]*[]core.Asig
 	return data
 }
 */
-
-func (extractor *Extractor) GetAsignaturasCarrera(codigo core.Codigo) *[]core.Asignatura {
-
-	extractor.LoadJSFunc()
-
-	extractor.Driver.LoadPageCarrera(codigo)
-	defer extractor.Driver.Page.MustClose()
-
-	println("Campos seleccionados...ejecutando búsqueda", codigo.Carrera)
-
-	asignaturas := extractor.ExtraerAsignaturas(codigo)
-
-	return &asignaturas
-}
