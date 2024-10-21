@@ -19,3 +19,12 @@ func getTipologiasUnicas(asignaturas []core.Asignatura) []string {
 
 	return tipologiasUnicas
 }
+
+func CreateDocumentCarrera(carrera string, facultad string, asignaturas []core.Asignatura) DocumentCarrera {
+	return DocumentCarrera{
+		ID:          carrera,
+		Facultad:    facultad,
+		Carrera:     carrera,
+		Asignaturas: asignaturas,
+	}
+}

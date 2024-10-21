@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 const pathToData string = "artifacts/"
@@ -27,14 +26,10 @@ const (
 
 func DeployData() {
 
-	client := GetMongoDbClient()
+	dbClient := NewDatabaseClient()
 	fmt.Println("Connected to MongoDB!")
 
-	defer func() {
-		if err := client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
+	defer dbClient.Disconnect()
 
 	merged := mergeAllData()
 	err := utils.SaveJsonToFile(merged, "data.json")
@@ -42,9 +37,9 @@ func DeployData() {
 		fmt.Println("Error al guardar archivo: ", err)
 	}
 
-	updateListadoCarreras(client, &merged)
-	saveInDatabase(client, &merged)
-	updateFechaExtraccion(client, merged["3068 FACULTAD DE MINAS"]["3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"][0].FechaExtraccion)
+	dbClient.updateListadoCarreras(&merged)
+	saveInDatabase(dbClient, &merged)
+	dbClient.updateFechaExtraccion(merged["3068 FACULTAD DE MINAS"]["3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"][0].FechaExtraccion)
 
 }
 
@@ -97,39 +92,10 @@ func mergeAllData() map[string]map[string][]core.Asignatura {
 	return merged
 }
 
-func updateFechaExtraccion(client *mongo.Client, lastUpdate string) {
-	collConfig := client.Database("asignaturas").Collection("config")
-	query := bson.D{{Key: "_id", Value: "metadata"}}
+func saveInDatabase(dbClient *DatabaseClient, data *map[string]map[string][]core.Asignatura) {
 
-	metadata := map[string]string{
-		"lastUpdated": lastUpdate,
-	}
-
-	collConfig.ReplaceOne(context.TODO(), query, metadata)
-}
-
-func updateListadoCarreras(client *mongo.Client, data *map[string]map[string][]core.Asignatura) {
-
-	listado := make(map[string]map[string][]string)
-
-	for facultad, carreras := range *data {
-		// crear el listado con datos
-		listado[facultad] = map[string][]string{}
-		for carrera, asignaturas := range carreras {
-			tipologiasUnicas := getTipologiasUnicas(asignaturas)
-			listado[facultad][carrera] = tipologiasUnicas
-		}
-	}
-
-	collConfig := client.Database("asignaturas").Collection("config")
-	query := bson.D{{Key: "_id", Value: "listado"}}
-	collConfig.ReplaceOne(context.TODO(), query, listado)
-}
-
-func saveInDatabase(client *mongo.Client, data *map[string]map[string][]core.Asignatura) {
-
-	collFacultades := client.Database("asignaturas").Collection("asignaturas")
-	collCarreras := client.Database("asignaturas").Collection("carreras")
+	collFacultades := dbClient.Client.Database("asignaturas").Collection("asignaturas")
+	collCarreras := dbClient.Client.Database("asignaturas").Collection("carreras")
 
 	var wg sync.WaitGroup
 	var wg2 sync.WaitGroup
@@ -155,19 +121,12 @@ func saveInDatabase(client *mongo.Client, data *map[string]map[string][]core.Asi
 		for carrera, asignaturas := range carreras {
 			wg2.Add(1)
 
-			document := DocumentCarrera{
-				ID:          carrera,
-				Facultad:    facultad,
-				Carrera:     carrera,
-				Asignaturas: asignaturas,
-			}
+			document := CreateDocumentCarrera(carrera, facultad, asignaturas)
 
 			go func(document DocumentCarrera) {
 				defer wg2.Done()
 
-				query := bson.D{{Key: "_id", Value: document.ID}}
-
-				_, err := collCarreras.ReplaceOne(context.TODO(), query, document)
+				err := dbClient.SaveCarrera(document, collCarreras)
 
 				if err != nil {
 					panic(err)
