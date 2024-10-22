@@ -33,7 +33,7 @@ func DeployData() {
 
 	dbClient.UpdateListadoCarreras(&merged)
 	dbClient.SaveDataCarreras(&merged)
-	dbClient.SaveDataSede(&merged)
+	// dbClient.SaveDataSede(&merged)
 	dbClient.UpdateFechaExtraccion(merged["3068 FACULTAD DE MINAS"]["3534 INGENIERÍA DE SISTEMAS E INFORMÁTICA"][0].FechaExtraccion)
 
 }
