@@ -96,3 +96,17 @@ jobs:
           name: data
           path: data.json
           retention-days: 90
+
+      - name: Deploy data
+        run: |
+          git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/imlargo/api-asignaturas.git
+          
+          rm -r 'api-asignaturas/data.json'
+          cp -r "data.json" "api-asignaturas/"
+          
+          cd api-asignaturas
+          git config --global user.email "jlargob@unal.edu.co"
+          git config --global user.name "imlargo"
+          git add .
+          git commit -m "Automated: update data materias"
+          git push
