@@ -99,7 +99,7 @@ func (db *DatabaseClient) SaveDataCarreras(data *map[string]map[string][]core.As
 
 				document := CreateDocumentCarrera(carrera, facultad, asignaturas)
 				if err := db.SaveCarrera(document); err != nil {
-					println("Error al guardar carrera: ", err)
+					fmt.Println("Error al guardar carrera: ", err)
 				}
 
 				fmt.Println("Carrera actualizada: ", document.Carrera)
