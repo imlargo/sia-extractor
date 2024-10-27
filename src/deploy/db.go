@@ -81,6 +81,9 @@ func (db *DatabaseClient) UpdateListadoCarreras(data *map[string]map[string][]co
 		}
 	}
 
+	listado["3 SEDE MEDELLÍN"] = make(map[string][]string)
+	listado["3 SEDE MEDELLÍN"]["3CLE COMPONENTE DE LIBRE ELECCIÓN"] = []string{"LIBRE ELECCIÓN"}
+
 	collConfig := db.Client.Database(dbName).Collection(pathCollConfig)
 	query := bson.D{{Key: "_id", Value: "listado"}}
 	collConfig.ReplaceOne(context.TODO(), query, listado)
