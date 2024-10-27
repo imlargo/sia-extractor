@@ -8,6 +8,10 @@ import (
 	"github.com/go-rod/rod"
 )
 
+const (
+	timeoutDuration = 10 * time.Second
+)
+
 func (driver *Driver) selectWithSleep(path, value, prevPath, prevValue string) {
 	time.Sleep(sleepSelect)
 	driver.SelectWithRecover(path, value, prevPath, prevValue)
@@ -23,7 +27,7 @@ func (driver *Driver) selectAllCheckboxes() {
 
 func (driver *Driver) SelectWithRecover(path, value, prevPath, prevValue string) {
 	for i := 0; i <= maxRetries; i++ {
-		selectEl := driver.Page.MustElement(path)
+		selectEl := driver.Page.Timeout(timeoutDuration).MustElement(path).CancelTimeout()
 		options := selectEl.MustElements("option")
 
 		if len(options) != 0 {
@@ -36,7 +40,7 @@ func (driver *Driver) SelectWithRecover(path, value, prevPath, prevValue string)
 			panic("Error al cargar la pagina, timeout")
 		}
 
-		el2 := driver.Page.MustElement(prevPath)
+		el2 := driver.Page.Timeout(timeoutDuration).MustElement(prevPath).CancelTimeout()
 		el2.MustClick()
 		Sel(el2, prevValue)
 		time.Sleep(sleepSelect)
@@ -58,7 +62,7 @@ func (driver *Driver) GetTable() rod.Elements {
 	for {
 		println("Buscando tabla...")
 
-		table := driver.Page.MustElement(".af_table_data-table-VH-lines")
+		table := driver.Page.Timeout(timeoutDuration).MustElement(".af_table_data-table-VH-lines").CancelTimeout()
 		time.Sleep(3 * time.Second)
 
 		if table == nil {
@@ -83,7 +87,6 @@ func (driver *Driver) GetTable() rod.Elements {
 	}
 
 	return rows
-
 }
 
 func (driver *Driver) getPage() *rod.Page {

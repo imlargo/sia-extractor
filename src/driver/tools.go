@@ -2,6 +2,7 @@ package driver
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-rod/rod"
 	"github.com/go-rod/rod/lib/proto"
@@ -28,5 +29,11 @@ func InterceptRequests(page *rod.Page) *rod.HijackRouter {
 
 func Sel(el *rod.Element, value string) error {
 	regex := fmt.Sprintf("^%s$", value)
-	return el.Select([]string{regex}, true, rod.SelectorTypeRegex)
+	el = el.Timeout(5 * time.Second)
+	err := el.Select([]string{regex}, true, rod.SelectorTypeRegex)
+	el.CancelTimeout()
+	if err != nil {
+		panic(fmt.Sprintf("Failed to select element with value %s: %v", value, err))
+	}
+	return err
 }

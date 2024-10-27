@@ -30,10 +30,12 @@ func (extractor *Extractor) LoadJSFunc() {
 
 func (extractor *Extractor) ExtraerAsignaturas(codigo core.Codigo) []core.Asignatura {
 
+	timeout := 15 * time.Second
+
 	// Hacer clic en el botón para ejecutar la búsqueda
-	extractor.Driver.Page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	extractor.Driver.Page.Timeout(timeout).MustWaitStable().MustWaitIdle().MustWaitDOMStable().CancelTimeout()
 	extractor.Driver.Page.MustElement(".af_button_link").MustClick()
-	extractor.Driver.Page.MustWaitStable().MustWaitIdle().MustWaitDOMStable()
+	extractor.Driver.Page.Timeout(timeout).MustWaitStable().MustWaitIdle().MustWaitDOMStable().CancelTimeout()
 
 	asignaturas := extractor.Driver.GetTable()
 	size := len(asignaturas)
@@ -44,21 +46,20 @@ func (extractor *Extractor) ExtraerAsignaturas(codigo core.Codigo) []core.Asigna
 	// Recorrer asignaturas
 	for i := 0; i < size; i++ {
 
-		asignaturas = extractor.Driver.Page.MustElement(".af_table_data-table-VH-lines").MustElement("tbody").MustElements("tr")
+		asignaturas = extractor.Driver.Page.Timeout(timeout).MustElement(".af_table_data-table-VH-lines").MustElement("tbody").CancelTimeout().MustElements("tr")
 
 		// Cargar link
 		asignaturas[i].MustElement(".af_commandLink").MustClick()
 
-		extractor.Driver.Page.MustElement(".af_showDetailHeader_content0")
+		extractor.Driver.Page.Timeout(timeout).MustElement(".af_showDetailHeader_content0").CancelTimeout()
 
 		// Extraer datos
-
 		rawData := extractor.Driver.Page.MustEval(extractor.JsExtractorFunc)
 		data[i] = core.ParseAsignatura(&rawData, &codigo)
 		println(i, "/", size, data[i].Nombre)
 
 		// Regresar
-		extractor.Driver.Page.MustElement(".af_button").MustClick()
+		extractor.Driver.Page.Timeout(timeout).MustElement(".af_button").CancelTimeout().MustClick()
 	}
 
 	println("Finalizado...")
