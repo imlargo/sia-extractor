@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 )
 
 type Extractor struct {
@@ -70,7 +71,8 @@ func (extractor *Extractor) CreatePathsCarreras() {
 
 	startTime := time.Now()
 	println("Iniciando...")
-	page := rod.New().MustConnect().MustIncognito().MustPage(core.SIA_URL)
+	u := launcher.New().NoSandbox(true).MustLaunch()
+	page := rod.New().ControlURL(u).MustConnect().MustIncognito().MustPage(core.SIA_URL)
 	println("Cargado. ok")
 	println("")
 

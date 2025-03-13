@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 )
 
 const (
@@ -19,7 +20,8 @@ type Driver struct {
 }
 
 func NewDriver() *Driver {
-	browser := rod.New().MustConnect()
+	u := launcher.New().NoSandbox(true).MustLaunch()
+	browser := rod.New().ControlURL(u).MustConnect()
 
 	return &Driver{
 		Browser: browser,
